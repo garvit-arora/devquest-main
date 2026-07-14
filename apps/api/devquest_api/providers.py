@@ -96,9 +96,20 @@ class OpenAICompatibleProvider:
         model = MODEL_REGISTRY.get(request.model)
         if not model or not model.upstream_model:
             raise ProviderUnavailable("Model alias is not mapped to an upstream model")
-        payload = request.model_dump()
+        payload = request.model_dump(exclude_none=True)
         payload["model"] = model.upstream_model
+        max_tokens = payload.pop("max_tokens", None)
+        if max_tokens is not None:
+            payload["max_completion_tokens"] = max_tokens
+        if self.is_azure_openai_v1():
+            payload.pop("temperature", None)
+        if not payload.get("tools"):
+            payload.pop("tools", None)
+            payload.pop("tool_choice", None)
         return payload
+
+    def is_azure_openai_v1(self) -> bool:
+        return ".openai.azure.com/openai/v1" in self.base_url
 
     async def chat_completion(self, request: ChatCompletionRequest) -> dict[str, object]:
         if not self.configured():
@@ -112,6 +123,9 @@ class OpenAICompatibleProvider:
                     json=self.upstream_request(request),
                 )
             response.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            detail = exc.response.text[:1000] if exc.response is not None else str(exc)
+            raise ProviderUnavailable(f"Azure provider request failed: {detail}") from exc
         except httpx.HTTPError as exc:
             raise ProviderUnavailable(f"Azure provider request failed: {exc}") from exc
         data = response.json()
@@ -150,6 +164,9 @@ class OpenAICompatibleProvider:
                                 yield f"{line}\n\n"
                         else:
                             yield f"{line}\n\n"
+        except httpx.HTTPStatusError as exc:
+            detail = exc.response.text[:1000] if exc.response is not None else str(exc)
+            raise ProviderUnavailable(f"Azure provider stream failed: {detail}") from exc
         except httpx.HTTPError as exc:
             raise ProviderUnavailable(f"Azure provider stream failed: {exc}") from exc
 

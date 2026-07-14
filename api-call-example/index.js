@@ -1,4 +1,4 @@
-const PASTED_API_KEY = "paste_your_api_key_here";
+const PASTED_API_KEY = "dq_live_B6UvIK4IrVof7edlSbo9HFIXI88I0A3K";
 const API_KEY = (PASTED_API_KEY !== "paste_your_api_key_here" ? PASTED_API_KEY : process.env.DEVQUEST_API_KEY || "").trim();
 const BASE_URL = process.env.DEVQUEST_BASE_URL || "https://api.devquest.garvitarora.xyz/v1";
 
@@ -18,7 +18,7 @@ async function main() {
     body: JSON.stringify({
       model: "gpt-5.6-sol",
       input: "Say hello from DevQuest AI in one short sentence.",
-      max_output_tokens: 120,
+      max_output_tokens: 512,
     }),
   });
 
