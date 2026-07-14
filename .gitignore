@@ -47,6 +47,8 @@ test-results/
 *.log
 .api-dev-*.log
 .api-dev-*.err.log
+.devquest-logs/
+devquest-logs.zip
 
 # Local editor files
 .idea/
