@@ -1,10 +1,13 @@
-const API_KEY = (process.env.DEVQUEST_API_KEY || "paste_your_api_key_here").trim();
+const PASTED_API_KEY = "paste_your_api_key_here";
+const API_KEY = (PASTED_API_KEY !== "paste_your_api_key_here" ? PASTED_API_KEY : process.env.DEVQUEST_API_KEY || "").trim();
 const BASE_URL = process.env.DEVQUEST_BASE_URL || "https://api.devquest.garvitarora.xyz/v1";
 
 async function main() {
   if (!API_KEY || API_KEY === "paste_your_api_key_here") {
-    throw new Error("Set DEVQUEST_API_KEY or paste your key into api-call-example/index.js.");
+    throw new Error('Paste your key into PASTED_API_KEY or run: $env:DEVQUEST_API_KEY="dq_live_..."');
   }
+
+  console.log(`Using DevQuest key prefix: ${API_KEY.slice(0, 12)} (${API_KEY.length} chars)`);
 
   const response = await fetch(`${BASE_URL}/responses`, {
     method: "POST",
