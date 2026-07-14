@@ -1,0 +1,49 @@
+name: Trigger auto deployment for devquest
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/devquest-AutoDeployTrigger-aeb9dc83-16c9-4b96-b78e-1a9e5ab37e58.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.DEVQUEST_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.DEVQUEST_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.DEVQUEST_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          _targetLabelKey_: _targetLabel_
+          registryUrl: 728c8785b0a640738993c9a5e48527f8.azurecr.io
+          registryUsername: ${{ secrets.DEVQUEST_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.DEVQUEST_REGISTRY_PASSWORD }}
+          containerAppName: devquest
+          resourceGroup: Virtual-Machine-website
+          imageToBuild: 728c8785b0a640738993c9a5e48527f8.azurecr.io/devquest:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
