@@ -11,9 +11,14 @@ on:
       - ".github/workflows/main_devquest.yml"
   workflow_dispatch:
 
+concurrency:
+  group: devquest-api-deploy
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       id-token: write
@@ -45,7 +50,7 @@ jobs:
           az webapp config set \
             --name devquest \
             --resource-group devquest \
-            --startup-file "bash startup.sh"
+            --startup-file "bash /home/site/wwwroot/startup.sh"
 
       - name: Deploy to Azure Web App
         run: |
