@@ -125,7 +125,14 @@ async def github_callback(
         award_referral_click_if_eligible(devquest_referral_click, user, is_new_user=is_new_user)
 
         response = RedirectResponse(f"{settings.app_url}/app")
-        response.set_cookie(SESSION_COOKIE, sign_session(user.model_dump()), httponly=True, secure=settings.secure_cookie, samesite="lax", max_age=60 * 60 * 24 * 7)
+        response.set_cookie(
+            SESSION_COOKIE,
+            sign_session(user.model_dump()),
+            httponly=True,
+            secure=settings.secure_cookie,
+            samesite=settings.session_cookie_samesite,
+            max_age=60 * 60 * 24 * 7,
+        )
         response.delete_cookie(OAUTH_STATE_COOKIE)
         response.delete_cookie(REFERRAL_COOKIE)
         response.delete_cookie(REFERRAL_CLICK_COOKIE)

@@ -39,7 +39,7 @@ async def admin_login(input: AdminLogin, response: Response) -> dict[str, object
         sign_session({"admin": True, "username": admin.username, "role": admin.role}),
         httponly=True,
         secure=settings.secure_cookie,
-        samesite="lax",
+        samesite=settings.session_cookie_samesite,
         max_age=60 * 60 * 8,
     )
     record_platform_log("info", "admin_login", "Admin signed in.", {"username": admin.username, "role": admin.role})

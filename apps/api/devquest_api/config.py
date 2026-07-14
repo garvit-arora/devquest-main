@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -40,6 +41,14 @@ class Settings:
     @property
     def secure_cookie(self) -> bool:
         return self.app_url.startswith("https://")
+
+    @property
+    def session_cookie_samesite(self) -> str:
+        app_host = urlparse(self.app_url).hostname
+        api_host = urlparse(self.api_url).hostname
+        if self.secure_cookie and app_host and api_host and app_host != api_host:
+            return "none"
+        return "lax"
 
 
 def load_settings() -> Settings:
