@@ -1,0 +1,356 @@
+@import "tailwindcss";
+
+@source "../";
+@source "../../../../packages";
+
+@font-face {
+  font-display: block;
+  font-family: Mori;
+  font-style: normal;
+  font-weight: 400;
+  src: url("https://assets.codepen.io/16327/PPMori-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-display: block;
+  font-family: Mori;
+  font-style: normal;
+  font-weight: 600;
+  src: url("https://assets.codepen.io/16327/PPMori-SemiBold.woff") format("woff");
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-elevated: var(--background-elevated);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-cyan: var(--cyan);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans), Inter, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-inter: Inter, var(--font-geist-sans), system-ui, sans-serif;
+  --font-mori: Mori, var(--font-geist-sans), Inter, system-ui, sans-serif;
+  --font-podium: "FSP DEMO - PODIUM Sharp 4.11", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  --shadow-glow: 0 0 40px rgba(91, 140, 255, 0.18);
+  --shadow-panel: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+:root {
+  --background: #07090d;
+  --background-elevated: #0c1016;
+  --surface: #10151d;
+  --surface-hover: #151c26;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-primary: #f5f7fa;
+  --text-secondary: #9da7b5;
+  --text-muted: #697586;
+  --accent: #5b8cff;
+  --accent-soft: rgba(91, 140, 255, 0.16);
+  --cyan: #64d8ff;
+  --success: #67e8a5;
+  --warning: #f5c76b;
+  --danger: #ff6f7d;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  color: var(--text-primary);
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(91, 140, 255, 0.14), transparent 32rem),
+    radial-gradient(circle at 80% 10%, rgba(100, 216, 255, 0.1), transparent 28rem),
+    var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-family: Mori, var(--font-geist-sans), Inter, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(91, 140, 255, 0.34);
+}
+
+.container-grid {
+  width: min(100% - 32px, 1400px);
+  margin-inline: auto;
+}
+
+.technical-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, black 62%, transparent);
+}
+
+.panel {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.88), rgba(12, 16, 22, 0.92));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.spotlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    260px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    rgba(91, 140, 255, 0.18),
+    transparent 58%
+  );
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+.clip-line {
+  display: block;
+  overflow: hidden;
+}
+
+.clip-line > span {
+  display: inline-block;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.font-inter {
+  font-family: Inter, var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.font-podium {
+  font-family: "FSP DEMO - PODIUM Sharp 4.11", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+}
+
+.font-mori {
+  font-family: Mori, var(--font-geist-sans), Inter, system-ui, sans-serif;
+}
+
+.mori-button {
+  position: relative;
+  isolation: isolate;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.5rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.72rem 1.35rem;
+  overflow: hidden;
+  color: #0e100f;
+  background:
+    radial-gradient(129% 99% at 120% 81%, rgb(223, 220, 255) 30%, rgb(166, 158, 255) 100%),
+    url("https://assets.codepen.io/16327/noise-e82662fe.png");
+  background-blend-mode: color-dodge;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68), 0 14px 34px rgba(166, 158, 255, 0.2);
+  font-family: Mori, var(--font-geist-sans), Inter, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+.mori-button:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), 0 18px 42px rgba(166, 158, 255, 0.26);
+}
+
+.mori-button:active {
+  transform: translateY(0);
+}
+
+.mori-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+}
+
+.mori-button-lg {
+  min-height: 3.5rem;
+  padding-inline: 2rem;
+  font-size: 0.86rem;
+}
+
+.mori-button-sm {
+  min-height: 2rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.68rem;
+}
+
+.responsive-braces {
+  position: relative;
+  display: inline-block;
+  color: #fffce1;
+}
+
+.responsive-braces::before,
+.responsive-braces::after {
+  content: "";
+  position: absolute;
+  top: -18%;
+  height: 132%;
+  aspect-ratio: 1 / 2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 27 78'%3E%3Cpath fill='%23FFFCE1' d='M26.52 77.21h-5.75c-6.83 0-12.38-5.56-12.38-12.38V48.38C8.39 43.76 4.63 40 .01 40v-4c4.62 0 8.38-3.76 8.38-8.38V12.4C8.38 5.56 13.94 0 20.77 0h5.75v4h-5.75c-4.62 0-8.38 3.76-8.38 8.38V27.6c0 4.34-2.25 8.17-5.64 10.38 3.39 2.21 5.64 6.04 5.64 10.38v16.45c0 4.62 3.76 8.38 8.38 8.38h5.75v4.02Z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.responsive-braces::before {
+  right: calc(100% + 0.18em);
+}
+
+.responsive-braces::after {
+  left: calc(100% + 0.18em);
+  transform: rotate(180deg);
+}
+
+@media (max-width: 520px) {
+  .responsive-braces::before,
+  .responsive-braces::after {
+    height: 104%;
+    top: -4%;
+  }
+}
+
+@layer utilities {
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-up,
+  .animate-fade-up-delay-1,
+  .animate-fade-up-delay-2,
+  .animate-fade-up-delay-3,
+  .animate-fade-up-delay-4 {
+    opacity: 0;
+    animation: fade-up 0.8s ease-out forwards;
+  }
+
+  .animate-fade-up-delay-1 {
+    animation-delay: 0.2s;
+  }
+
+  .animate-fade-up-delay-2 {
+    animation-delay: 0.4s;
+  }
+
+  .animate-fade-up-delay-3 {
+    animation-delay: 0.6s;
+  }
+
+  .animate-fade-up-delay-4 {
+    animation-delay: 0.8s;
+  }
+
+  .animate-fade-in {
+    opacity: 0;
+    animation: fade-in 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in-delay {
+    opacity: 0;
+    animation: fade-in 0.8s ease-out 0.3s forwards;
+  }
+
+  .animate-scale-in {
+    opacity: 0;
+    animation: scale-in 0.8s ease-out forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

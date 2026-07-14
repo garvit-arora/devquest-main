@@ -1,0 +1,52 @@
+services:
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: devquest
+      MONGO_INITDB_ROOT_PASSWORD: devquest
+      MONGO_INITDB_DATABASE: devquest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    env_file: .env
+    environment:
+      MONGODB_URI: mongodb://devquest:devquest@mongo:27017/devquest?authSource=admin
+      MONGODB_DATABASE: devquest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+
+  worker:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    env_file: .env
+    environment:
+      MONGODB_URI: mongodb://devquest:devquest@mongo:27017/devquest?authSource=admin
+      MONGODB_DATABASE: devquest
+    command: ["python", "-m", "apps.api.devquest_api.worker"]
+    depends_on:
+      - mongo
+
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/web.Dockerfile
+    environment:
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_DEVQUEST_GATEWAY_URL: https://api.devquest.garvitarora.xyz/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  mongodata:

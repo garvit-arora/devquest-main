@@ -1,0 +1,12 @@
+{
+  "name": "@devquest/animation-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0"
+  }
+}

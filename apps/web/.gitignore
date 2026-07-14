@@ -1,0 +1,26 @@
+# Next.js output
+.next/
+.next-dev/
+out/
+
+# Dependencies and build cache
+node_modules/
+.turbo/
+dist/
+build/
+
+# Vercel and local secrets
+.vercel/
+.env
+.env.local
+.env.*.local
+!.env.local.example
+
+# Tests and logs
+coverage/
+playwright-report/
+test-results/
+*.log
+
+# TypeScript incremental caches
+*.tsbuildinfo

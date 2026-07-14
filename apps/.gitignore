@@ -1,0 +1,9 @@
+# Python package artifacts used by the FastAPI app package marker.
+__pycache__/
+*.py[cod]
+
+# App-local runtime outputs.
+*.log
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
