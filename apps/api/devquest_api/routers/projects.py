@@ -7,7 +7,7 @@ from ..deps import optional_user, require_user
 from ..models import AdminUser, ApprovedRepository, GitHubUser, RepositoryCampaignCreate, RepositoryView
 from ..repositories import REPOSITORY_STAR_REWARD_CREDITS
 from ..repository_store import save_repository_campaign
-from ..services.entitlements import refresh_user_repository_status, repository_view, verify_repository_star
+from ..services.entitlements import refresh_user_repository_status, repository_view, sync_repository_campaigns_from_database, verify_repository_star
 from .admin import require_admin
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
@@ -15,6 +15,7 @@ router = APIRouter(prefix="/api/projects", tags=["projects"])
 
 @router.get("")
 async def list_projects(user: GitHubUser | None = Depends(optional_user)) -> dict[str, object]:
+    sync_repository_campaigns_from_database()
     if user:
         await refresh_user_repository_status(user, include_untracked=True, force_refresh=True)
         return {"data": [repository_view(user.id, repo).model_dump(mode="json") for repo in state.repositories.values()]}

@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 
 from .. import state
+from ..services.entitlements import sync_repository_campaigns_from_database
 from .bounties import rank_for_user
 
 router = APIRouter(prefix="/api", tags=["profiles"])
@@ -50,12 +51,14 @@ async def public_profile(login: str) -> dict[str, object]:
 
 @router.get("/campaigns")
 async def list_campaigns() -> dict[str, object]:
+    sync_repository_campaigns_from_database()
     campaigns = [campaign_payload(repo.id) for repo in state.repositories.values() if repo.status == "active"]
     return {"data": campaigns}
 
 
 @router.get("/campaigns/{campaign_id:path}")
 async def campaign_detail(campaign_id: str) -> dict[str, object]:
+    sync_repository_campaigns_from_database()
     if campaign_id not in state.repositories:
         raise HTTPException(status_code=404, detail="campaign not found")
     return campaign_payload(campaign_id, detail=True)

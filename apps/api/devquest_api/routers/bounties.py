@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from .. import state
 from ..deps import optional_user, require_user
 from ..models import GitHubUser, LedgerRecord, LedgerType
+from ..services.entitlements import sync_repository_campaigns_from_database
 from ..user_store import save_github_user
 
 router = APIRouter(prefix="/api", tags=["bounties"])
@@ -115,6 +116,7 @@ BOUNTY_CATEGORIES = [
 
 @router.get("/bounties")
 async def list_bounties(user: GitHubUser | None = Depends(optional_user)) -> dict[str, object]:
+    sync_repository_campaigns_from_database()
     tasks = star_bounty_tasks(user) + pull_request_bounty_tasks(user) + issue_bounty_tasks(user) + configured_bounty_tasks()
     live_tasks = [task for task in tasks if task["status"] != "coming_soon"]
     return {

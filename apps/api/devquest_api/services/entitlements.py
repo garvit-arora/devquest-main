@@ -11,7 +11,7 @@ from ..azure_services import enqueue_star_verification
 from ..config import STAR_RECHECK_SECONDS
 from ..deps import add_notification, now_utc
 from ..models import ApprovedRepository, GitHubUser, LedgerType, RepositoryEntitlement, RepositoryView
-from ..repository_store import save_repository_entitlement
+from ..repository_store import load_repository_campaigns, save_repository_entitlement
 
 
 def entitlement_key(user_id: str, repository_id: str) -> str:
@@ -33,6 +33,17 @@ def repository_view(user_id: str, repo: ApprovedRepository) -> RepositoryView:
         last_verified_at=entitlement.last_verified_at,
         next_verification_at=entitlement.next_verification_at,
     )
+
+
+def sync_repository_campaigns_from_database() -> None:
+    try:
+        campaigns = load_repository_campaigns()
+    except Exception:
+        return
+    if not campaigns:
+        return
+    state.repositories.clear()
+    state.repositories.update({repo.id: repo for repo in campaigns})
 
 
 async def check_github_star(user: GitHubUser, repo: ApprovedRepository) -> str:
@@ -101,6 +112,7 @@ async def verify_repository_star(user: GitHubUser, repo: ApprovedRepository) -> 
 
 
 async def refresh_user_repository_status(user: GitHubUser, *, include_untracked: bool = False, force_refresh: bool = False) -> list[RepositoryEntitlement]:
+    sync_repository_campaigns_from_database()
     candidates: list[ApprovedRepository] = []
     for repo in state.repositories.values():
         entitlement = state.entitlements.get(entitlement_key(user.id, repo.id))
@@ -125,6 +137,7 @@ async def refresh_user_repository_status(user: GitHubUser, *, include_untracked:
 
 
 async def ensure_repository_access(user_id: str, *, force_refresh: bool = False) -> None:
+    sync_repository_campaigns_from_database()
     if not state.repositories:
         raise repository_access_error()
     user = state.github_users.get(user_id)
