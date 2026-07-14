@@ -21,19 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install backend dependencies into App Service package
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-
       - name: Create deployment package
         run: |
-          zip -r devquest-api.zip apps requirements.txt startup.sh .python_packages
+          zip -r devquest-api.zip apps requirements.txt startup.sh
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -44,18 +34,22 @@ jobs:
 
       - name: Configure Azure Web App startup
         run: |
+          az webapp config appsettings delete \
+            --name devquest \
+            --resource-group devquest \
+            --setting-names WEBSITE_RUN_FROM_PACKAGE || true
           az webapp config appsettings set \
             --name devquest \
             --resource-group devquest \
-            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false ENABLE_ORYX_BUILD=false PYTHONPATH=/home/site/wwwroot:/home/site/wwwroot/.python_packages/lib/site-packages WEBSITES_PORT=8000 PORT=8000 WEB_CONCURRENCY=2
+            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true ENABLE_ORYX_BUILD=true PYTHONPATH=/home/site/wwwroot:/home/site/wwwroot/.python_packages/lib/site-packages WEBSITES_PORT=8000 PORT=8000 WEB_CONCURRENCY=2
           az webapp config set \
             --name devquest \
             --resource-group devquest \
             --startup-file "bash startup.sh"
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "devquest"
-          slot-name: "Production"
-          package: devquest-api.zip
+        run: |
+          az webapp deployment source config-zip \
+            --name devquest \
+            --resource-group devquest \
+            --src devquest-api.zip
