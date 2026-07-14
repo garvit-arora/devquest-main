@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ComponentType, MouseEvent as ReactMouseEvent, SVGProps, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiBaseUrl } from "@/lib/env";
@@ -284,7 +284,33 @@ function SidebarContent({ user, collapsed, onToggle, onProfile }: { user: AuthUs
 }
 
 function OrganizationSettings({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const router = useRouter();
+  const [busyAction, setBusyAction] = useState<"signout" | "disconnect" | null>(null);
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
   if (!open) return null;
+
+  async function runAccountAction(action: "signout" | "disconnect") {
+    setBusyAction(action);
+    setMessage(null);
+    try {
+      const endpoint = action === "disconnect" ? "/api/auth/github/disconnect" : "/api/auth/logout";
+      const response = await fetch(`${apiBaseUrl()}${endpoint}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error(action === "disconnect" ? "Could not disconnect GitHub." : "Could not sign out.");
+      onClose();
+      router.replace("/signin");
+      router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+    } finally {
+      setBusyAction(null);
+      setConfirmDisconnect(false);
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-[80] grid place-items-center bg-black/72 p-4">
@@ -297,14 +323,6 @@ function OrganizationSettings({ open, onClose }: { open: boolean; onClose: () =>
         </div>
 
         <div className="grid gap-4 p-4">
-          <div className="grid gap-3 border-b border-[#333] pb-4 md:grid-cols-[190px_1fr] md:items-center">
-            <label className="text-sm font-semibold">Workspace Name</label>
-            <div className="flex gap-2">
-              <input className="h-8 flex-1 rounded border border-[#3d3d3d] bg-[#262626] px-2 text-sm outline-none focus:border-[#67e8bd]" defaultValue="Personal DevQuest" />
-              <button className="mori-button mori-button-sm inline-flex">Save</button>
-            </div>
-          </div>
-
           <div className="grid gap-3 border-b border-[#333] pb-5 md:grid-cols-[190px_1fr]">
             <div>
               <p className="text-sm font-semibold">GitHub Account</p>
@@ -313,21 +331,64 @@ function OrganizationSettings({ open, onClose }: { open: boolean; onClose: () =>
               </p>
             </div>
             <div className="flex h-fit gap-2">
-              <button className="h-8 rounded bg-[#7a3333] px-3 text-sm font-semibold text-[#ff9b9b] hover:bg-[#933f3f]">Disconnect GitHub</button>
+              <button
+                disabled={busyAction !== null}
+                onClick={() => setConfirmDisconnect(true)}
+                className="h-8 rounded border border-[#593434] bg-[#2a2020] px-3 text-sm font-medium text-[#ffb6b6] hover:bg-[#342323] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {busyAction === "disconnect" ? "Disconnecting..." : "Disconnect GitHub"}
+              </button>
             </div>
           </div>
 
           <div className="flex items-center justify-between border-b border-[#333] pb-4">
             <p className="text-sm font-semibold">Sign Out</p>
-            <button className="h-8 rounded bg-[#ff4d4d] px-3 text-sm font-semibold text-white hover:bg-[#ff6262]">Sign out</button>
+            <button
+              disabled={busyAction !== null}
+              onClick={() => void runAccountAction("signout")}
+              className="h-8 rounded border border-[#3a3a3a] bg-[#f4f4f4] px-3 text-sm font-medium text-[#101010] hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {busyAction === "signout" ? "Signing out..." : "Sign out"}
+            </button>
           </div>
 
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold">Delete Account</p>
             <p className="text-sm font-medium text-[#9a9a9a]">Use account deletion after exporting needed records.</p>
           </div>
+
+          {message ? (
+            <div className="rounded border border-[#5d3939] bg-[#2a1f1f] px-3 py-2 text-sm text-[#ffb6b6]">{message}</div>
+          ) : null}
         </div>
       </section>
+
+      {confirmDisconnect ? (
+        <section className="fixed inset-0 z-[90] grid place-items-center bg-black/60 p-4">
+          <div className="w-full max-w-sm rounded-md border border-[#333] bg-[#202020] p-4 shadow-2xl">
+            <h3 className="text-base font-semibold text-white">Disconnect GitHub?</h3>
+            <p className="mt-2 text-sm leading-5 text-[#aaa]">
+              This removes the stored GitHub token and signs you out. You can reconnect by signing in with GitHub again.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                disabled={busyAction !== null}
+                onClick={() => setConfirmDisconnect(false)}
+                className="h-8 rounded border border-[#3a3a3a] px-3 text-sm font-medium text-[#d8d8d8] hover:bg-[#2b2b2b] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={busyAction !== null}
+                onClick={() => void runAccountAction("disconnect")}
+                className="h-8 rounded border border-[#593434] bg-[#2a2020] px-3 text-sm font-medium text-[#ffb6b6] hover:bg-[#342323] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {busyAction === "disconnect" ? "Disconnecting..." : "Disconnect"}
+              </button>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

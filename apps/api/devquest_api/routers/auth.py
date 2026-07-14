@@ -15,7 +15,7 @@ from ..models import GitHubUser
 from ..security import sign_session
 from ..services.audit import record_platform_log
 from ..services.referrals import award_referral_click_if_eligible
-from ..user_store import delete_github_user, save_github_user
+from ..user_store import delete_github_user, disconnect_github_user, save_github_user
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 logger = logging.getLogger(__name__)
@@ -140,6 +140,14 @@ async def github_callback(
 async def logout(response: Response) -> dict[str, str]:
     response.delete_cookie(SESSION_COOKIE)
     return {"status": "signed_out"}
+
+
+@router.post("/github/disconnect")
+async def disconnect_github(response: Response, user: GitHubUser = Depends(require_user)) -> dict[str, str]:
+    state.github_tokens.pop(user.id, None)
+    disconnect_github_user(user.id)
+    response.delete_cookie(SESSION_COOKIE)
+    return {"status": "disconnected"}
 
 
 @router.delete("/account")

@@ -25,6 +25,13 @@ def delete_github_user(user_id: str) -> None:
     collection.delete_one({"id": user_id})
 
 
+def disconnect_github_user(user_id: str) -> None:
+    collection = github_user_collection()
+    if collection is None:
+        return
+    collection.update_one({"id": user_id}, {"$unset": {"github_access_token": ""}})
+
+
 def load_github_users() -> tuple[dict[str, GitHubUser], dict[str, str]]:
     collection = github_user_collection()
     if collection is None:
