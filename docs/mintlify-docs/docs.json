@@ -1,0 +1,55 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "DevQuest AI",
+  "colors": {
+    "primary": "#111115",
+    "light": "#ffffff",
+    "dark": "#07090d"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/artificial.png",
+    "dark": "/logo/artificial.png"
+  },
+  "navigation": {
+    "pages": [
+      {
+        "group": "Get started",
+        "pages": [
+          "introduction",
+          "quickstart",
+          "codex",
+          "models"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/endpoint-call",
+          "api-reference/chat-completions",
+          "api-reference/usage"
+        ]
+      },
+      {
+        "group": "Platform",
+        "pages": [
+          "platform/automations-and-referrals"
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Dashboard",
+        "href": "https://devquest.garvitarora.xyz/app"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/CoverFI-space/Coverfi-landing"
+    }
+  }
+}

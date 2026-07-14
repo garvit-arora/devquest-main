@@ -1,0 +1,143 @@
+---
+title: Call the DevQuest endpoint
+description: Make your first authenticated request to the DevQuest AI gateway.
+---
+
+Use this page after you have starred an approved repository and created an API key in the dashboard.
+
+<Info>
+  Raw API keys are shown once. Store your key in an environment variable and do not commit it.
+</Info>
+
+## Base URL
+
+For production:
+
+```text
+https://api.devquest.garvitarora.xyz/v1
+```
+
+For local development:
+
+```text
+http://localhost:8000/v1
+```
+
+## Environment variable
+
+<CodeGroup>
+```powershell Windows PowerShell
+$env:DEVQUEST_API_KEY = "dq_live_your_key"
+```
+
+```bash macOS / Linux
+export DEVQUEST_API_KEY="dq_live_your_key"
+```
+</CodeGroup>
+
+## Responses API
+
+Use `POST /v1/responses` for Codex-compatible clients and modern response workflows.
+
+```bash cURL
+curl https://api.devquest.garvitarora.xyz/v1/responses \
+  -H "Authorization: Bearer $DEVQUEST_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.6-sol",
+    "input": "Explain this repository in three short bullets.",
+    "temperature": 0.3,
+    "max_output_tokens": 600
+  }'
+```
+
+```ts JavaScript
+const response = await fetch("https://api.devquest.garvitarora.xyz/v1/responses", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.DEVQUEST_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    model: "gpt-5.6-sol",
+    input: "Explain this repository in three short bullets.",
+    temperature: 0.3,
+    max_output_tokens: 600,
+  }),
+});
+
+if (!response.ok) {
+  throw new Error(await response.text());
+}
+
+const data = await response.json();
+console.log(data.output?.[0]?.content?.[0]?.text);
+```
+
+```python Python
+import os
+import requests
+
+response = requests.post(
+    "https://api.devquest.garvitarora.xyz/v1/responses",
+    headers={
+        "Authorization": f"Bearer {os.environ['DEVQUEST_API_KEY']}",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-5.6-sol",
+        "input": "Explain this repository in three short bullets.",
+        "temperature": 0.3,
+        "max_output_tokens": 600,
+    },
+    timeout=60,
+)
+
+response.raise_for_status()
+data = response.json()
+print(data["output"][0]["content"][0]["text"])
+```
+
+## Chat Completions
+
+Use `POST /v1/chat/completions` when you need OpenAI-compatible chat-style messages.
+
+```bash cURL
+curl https://api.devquest.garvitarora.xyz/v1/chat/completions \
+  -H "Authorization: Bearer $DEVQUEST_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.6-sol",
+    "messages": [
+      { "role": "user", "content": "Write a concise launch checklist." }
+    ],
+    "max_tokens": 600
+  }'
+```
+
+## Streaming
+
+Set `stream` to `true` to receive server-sent events.
+
+```bash cURL
+curl https://api.devquest.garvitarora.xyz/v1/responses \
+  -N \
+  -H "Authorization: Bearer $DEVQUEST_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.6-sol",
+    "input": "Stream a short setup guide.",
+    "stream": true
+  }'
+```
+
+## Credits and access
+
+Each successful request deducts at most `2` credits. The backend checks that:
+
+- Your API key is active
+- Your selected model is allowed on that key
+- You still have credits
+- Your approved repository star is still valid
+
+If a user unstars a required repository, API access is blocked on the next verification check and on API requests.

@@ -1,0 +1,22 @@
+# Python virtual environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# API runtime logs and local-only secrets
+*.log
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Local build outputs
+dist/
+build/

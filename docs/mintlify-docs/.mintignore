@@ -1,0 +1,14 @@
+# Mintlify automatically ignores common build and VCS folders.
+
+# Local/editor files
+.DS_Store
+.env
+.env.*
+node_modules/
+.next/
+dist/
+coverage/
+
+# Draft content
+drafts/
+*.draft.mdx

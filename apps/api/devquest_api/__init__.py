@@ -1,0 +1,1 @@
+"""DevQuest AI FastAPI application."""

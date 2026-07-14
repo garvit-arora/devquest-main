@@ -1,0 +1,64 @@
+---
+title: Codex setup
+description: Use DevQuest AI with Codex CLI and the Codex IDE extension.
+---
+
+## Configure Codex
+
+Add this provider to `C:\Users\<USERNAME>\.codex\config.toml`.
+
+```toml
+model = "gpt-5.6-sol"
+model_provider = "devquest"
+model_reasoning_effort = "medium"
+
+[model_providers.devquest]
+name = "DevQuest"
+base_url = "https://api.devquest.garvitarora.xyz/v1"
+env_key = "DEVQUEST_API_KEY"
+wire_api = "responses"
+```
+
+In the IDE extension, you can also open the same file from Codex Settings.
+
+## Set your key
+
+Windows PowerShell for the current terminal:
+
+```powershell
+$env:DEVQUEST_API_KEY = "dq_agent_xxxxxxxxx"
+```
+
+Windows PowerShell for future terminals:
+
+```powershell
+setx DEVQUEST_API_KEY "dq_agent_xxxxxxxxx"
+```
+
+Restart VS Code, Cursor, Windsurf, or your VS Code fork afterward so the persistent variable is visible.
+
+## Launch Codex
+
+After restarting, launch Codex from your IDE extension or run:
+
+```powershell
+codex
+```
+
+## What DevQuest supports
+
+DevQuest routes model inference through:
+
+```text
+Codex client -> DevQuest API -> Azure deployment
+```
+
+Local code edits, terminal commands, file inspection, diffs, and approval prompts still happen on the user's computer.
+
+The gateway implements `POST /v1/responses` for Codex-compatible clients, including text responses, SSE text streaming, non-streaming function-call output items, function-call output ingestion, usage reporting, credit checks, and repository-star enforcement. Streaming tool-call deltas should be treated as experimental until validated with the exact Codex client version you deploy against. Use medium reasoning for the DevQuest Codex provider.
+
+Use a model enabled on the user's API key. The dashboard currently offers `DeepSeek-V4-Pro`, `gpt-5.5`, `gpt-5.6-luna`, and `gpt-5.6-sol`, so this guide uses `gpt-5.6-sol`.
+
+## Not included
+
+DevQuest API keys do not include ChatGPT-plan usage, Codex Cloud tasks, OpenAI-hosted remote agents, cloud delegation, or proprietary features outside your configured Azure deployments.

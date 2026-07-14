@@ -1,0 +1,33 @@
+---
+title: Models
+description: Azure deployment names available through the DevQuest gateway.
+---
+
+DevQuest exposes your approved Azure deployment names through the restricted gateway.
+
+## Public models
+
+Only the models listed in `DEVQUEST_PUBLIC_MODELS` are shown to users and allowed on API keys.
+
+```env
+DEVQUEST_PUBLIC_MODELS=DeepSeek-V4-Pro,gpt-5.5,gpt-5.6-luna,gpt-5.6-sol
+```
+
+Users can attach at most 3 models to one key.
+
+## Backend catalog
+
+The backend maps these public model IDs to Azure deployment names:
+
+| Public model | Env variable | Azure deployment |
+| --- | --- | --- |
+| `DeepSeek-V4-Pro` | `DEVQUEST_DEEPSEEK_V4_PRO_MODEL` | `DeepSeek-V4-Pro` |
+| `gpt-5.5` | `DEVQUEST_AZURE_GPT_55_MODEL` | `gpt-5.5` |
+| `gpt-5.6-luna` | `DEVQUEST_AZURE_GPT_56_LUNA_MODEL` | `gpt-5.6-luna` |
+| `gpt-5.6-sol` | `DEVQUEST_AZURE_GPT_56_SOL_MODEL` | `gpt-5.6-sol` |
+
+## List public models
+
+```bash
+curl http://localhost:8000/v1/models
+```

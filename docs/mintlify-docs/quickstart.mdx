@@ -1,0 +1,58 @@
+---
+title: Quickstart
+description: Configure DevQuest AI with GitHub OAuth, Azure deployments, and a restricted gateway.
+---
+
+## 1. Configure GitHub OAuth
+
+In `.env`:
+
+```env
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
+
+For local development with the current API port:
+
+```text
+Homepage URL: http://localhost:3000
+Callback URL: http://localhost:8000/api/auth/github/callback
+```
+
+## 2. Configure Azure provider
+
+Use the Azure OpenAI endpoint from Azure. DevQuest normalizes a root endpoint to `/openai/v1` automatically.
+
+```env
+DEVQUEST_PROVIDER_BASE_URL=https://star-project-keys-resource.openai.azure.com/
+DEVQUEST_PROVIDER_API_KEY=your_azure_api_key
+DEVQUEST_PUBLIC_MODELS=DeepSeek-V4-Pro,gpt-5.5,gpt-5.6-luna,gpt-5.6-sol
+
+DEVQUEST_DEEPSEEK_V4_PRO_MODEL=DeepSeek-V4-Pro
+DEVQUEST_AZURE_GPT_55_MODEL=gpt-5.5
+DEVQUEST_AZURE_GPT_56_LUNA_MODEL=gpt-5.6-luna
+DEVQUEST_AZURE_GPT_56_SOL_MODEL=gpt-5.6-sol
+```
+
+The public model name and Azure deployment name match for these four deployments.
+
+## 3. Start services
+
+```bash
+npm run dev --workspace @devquest/web
+python -m uvicorn apps.api.devquest_api.main:app --port 8000
+```
+
+## 4. Create an API key
+
+Open the dashboard, verify a repository star, and create an API key with up to 3 model aliases.
+
+Raw keys are shown once. Store the key securely.
+
+## 5. Call the endpoint
+
+Use the [endpoint call guide](/api-reference/endpoint-call) for cURL, JavaScript, Python, streaming, and Responses API examples.
+
+## 6. Use Codex
+
+Use the `Codex setup` guide to add DevQuest as a custom Responses provider for Codex CLI, VS Code, Cursor, Windsurf, and compatible VS Code forks.

@@ -1,0 +1,60 @@
+---
+title: Automations and referrals
+description: Build credit-powered workflows, store credentials safely, and invite users with referral links.
+---
+
+## Automations
+
+DevQuest Automations let users build n8n-style flows with triggers, AI actions, app calls, and storage nodes.
+
+Supported trigger starters include:
+
+- Sheet row added
+- Form submitted
+- Waitlist email received
+- Webhook received
+- Scheduled run
+- Manual run
+
+The visible workflow canvas does not ask users to do GitHub star work. Repository access is enforced by the backend before sensitive actions run.
+
+## AI tasks
+
+Use a DevQuest AI node when a workflow should classify, summarize, enrich, score, or route incoming data.
+
+Each run uses DevQuest credits and is limited by the user's active entitlement. The default thinking option exposed in the dashboard is `medium`.
+
+## Database save nodes
+
+Database save nodes can store workflow output after an AI step or app action.
+
+When a database credential is added, DevQuest stores only a hashed credential record in MongoDB. Raw secrets are not returned to the dashboard.
+
+<Warning>
+  If a future workflow action needs to reuse a raw external database password, store it with Azure Key Vault or encrypted secret storage instead of a one-way hash.
+</Warning>
+
+## Referrals
+
+Use referral links in this format:
+
+```text
+https://devquest.space/r/USER_REFERRAL_CODE
+```
+
+When the link opens, DevQuest records the referral click in MongoDB, stores a secure HTTP-only cookie, and redirects the user to normal sign in without a visible referral query parameter.
+
+Referral credits are awarded only after the referred user connects GitHub successfully.
+
+## Notifications
+
+Dashboard notifications are stored in MongoDB and also dispatched through Azure services when configured:
+
+- Azure Service Bus for notification queueing
+- Azure Communication Email for email delivery
+
+Configure the queue name with:
+
+```text
+AZURE_SERVICE_BUS_NOTIFICATION_QUEUE=devquest-user-notifications
+```

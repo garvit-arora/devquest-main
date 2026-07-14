@@ -1,0 +1,21 @@
+---
+title: Introduction
+description: Star approved repositories, earn credits, and call Azure-backed models through DevQuest AI.
+---
+
+DevQuest AI is an OpenAI-compatible gateway for Azure model deployments.
+
+Users sign in with GitHub, star approved repositories, receive credits, create an API key, and send requests through your backend. Azure provider keys and deployment names stay private on the server.
+
+## Credit rules
+
+- Starring one approved repository grants 500 credits.
+- Every successful model request costs at most 2 credits.
+- Large token usage still costs a maximum of 2 credits per request.
+- If a user unstars the required repository, gateway access is blocked.
+
+## Model rules
+
+- The backend can know about roughly 10 Azure deployments.
+- Users can enable at most 3 model aliases on a single API key.
+- The public model list is controlled by `DEVQUEST_PUBLIC_MODELS`.

@@ -1,0 +1,35 @@
+---
+title: Usage
+description: Inspect credits and request usage for a DevQuest API key.
+---
+
+## Endpoint
+
+```http
+GET /v1/usage
+```
+
+## Request
+
+```bash
+curl http://localhost:8000/v1/usage \
+  -H "Authorization: Bearer dq_live_your_key"
+```
+
+## Response
+
+```json
+{
+  "credits": 498,
+  "records": [
+    {
+      "model": "gpt-5.6-sol",
+      "credits": 2,
+      "prompt_tokens": 100,
+      "completion_tokens": 50,
+      "total_tokens": 150,
+      "status": 200
+    }
+  ]
+}
+```
