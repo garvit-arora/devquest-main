@@ -125,7 +125,7 @@ export function ApiKeyManager() {
           setAvailableModels(nextModels);
           setSelectedModels((current) => {
             const allowed = current.filter((model) => nextModels.some((item) => item.alias === model));
-            return allowed.length ? allowed.slice(0, 3) : nextModels.slice(0, 3).map((item) => item.alias);
+            return allowed.length ? [allowed[0]] : nextModels.slice(0, 1).map((item) => item.alias);
           });
           setUser(userPayload?.user ?? null);
           setStatusMessage("Synced with the DevQuest API.");
@@ -197,7 +197,7 @@ export function ApiKeyManager() {
       setStatusMessage("Key created. Copy it now; the raw secret is shown once.");
       setCreateOpen(false);
       setName("");
-      setSelectedModels(creationModels.slice(0, 3));
+      setSelectedModels(creationModels.slice(0, 1));
     } catch {
       setStatusMessage("Key creation failed. Confirm GitHub sign-in and the API service.");
     } finally {
@@ -382,11 +382,7 @@ export function ApiKeyManager() {
           onNameChange={setName}
           onLimitChange={setLimit}
           onModelToggle={(model) => {
-            setSelectedModels((current) => {
-              if (current.includes(model)) return current.filter((item) => item !== model);
-              if (current.length >= 3) return current;
-              return [...current, model];
-            });
+            setSelectedModels([model]);
           }}
           onCreate={createKey}
         />
@@ -467,18 +463,16 @@ function CreateKeyModal({
 
             <div className="rounded border border-[#333] bg-[#181818] p-3">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8f8f8f]">Models</p>
-              <p className="mt-2 text-xs leading-5 text-[#8f8f8f]">Choose up to 3 model aliases this key can call.</p>
+              <p className="mt-2 text-xs leading-5 text-[#8f8f8f]">Choose one model alias this key can call.</p>
               <div className="mt-3 grid gap-2">
                 {models.map((model) => {
                   const active = selectedModels.includes(model);
-                  const disabled = !active && selectedModels.length >= 3;
                   return (
                     <button
                       key={model}
                       type="button"
                       onClick={() => onModelToggle(model)}
-                      disabled={disabled}
-                      className={`flex h-9 items-center justify-between rounded border px-3 text-left text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-45 ${active ? "border-[#dfdcff] bg-[#dfdcff] text-[#111]" : "border-[#3d3d3d] bg-[#202020] text-[#d8d8d8] hover:border-[#777]"}`}
+                      className={`flex h-9 items-center justify-between rounded border px-3 text-left text-sm font-semibold transition ${active ? "border-[#dfdcff] bg-[#dfdcff] text-[#111]" : "border-[#3d3d3d] bg-[#202020] text-[#d8d8d8] hover:border-[#777]"}`}
                     >
                       <span>{modelLabel(model)}</span>
                       {active ? <Check className="size-4" /> : null}
@@ -486,7 +480,7 @@ function CreateKeyModal({
                   );
                 })}
               </div>
-              <p className="mt-3 text-xs text-[#8f8f8f]">{selectedModels.length}/3 selected</p>
+              <p className="mt-3 text-xs text-[#8f8f8f]">{selectedModels.length}/1 selected</p>
             </div>
           </div>
 

@@ -170,7 +170,7 @@ function FeatureSlides() {
       title: "Use Models",
       copy: "Create a key once, route requests through DevQuest, and use Azure-backed GPT, DeepSeek, and coding models with strict credit limits.",
       accent: "bg-[#ff8709] text-black",
-      stat: "3 models per key",
+      stat: "1 model per key",
     },
     {
       title: "Build Flows",

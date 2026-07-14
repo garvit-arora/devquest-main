@@ -28,9 +28,10 @@ async def create_api_key(input: ApiKeyCreate, user: GitHubUser = Depends(require
         raise HTTPException(status_code=429, detail="maximum active key count reached")
     models = list(dict.fromkeys(input.models))
     if not models:
-        raise HTTPException(status_code=400, detail="choose at least one model for this API key")
-    if len(models) > settings.max_models_per_key:
-        raise HTTPException(status_code=400, detail=f"choose at most {settings.max_models_per_key} models per API key")
+        raise HTTPException(status_code=400, detail="choose one model for this API key")
+    max_models = min(settings.max_models_per_key, 1)
+    if len(models) > max_models:
+        raise HTTPException(status_code=400, detail="choose only one model per API key")
     public_ids = set(public_model_ids())
     invalid = [model for model in models if model not in MODEL_REGISTRY or model not in public_ids]
     if invalid:

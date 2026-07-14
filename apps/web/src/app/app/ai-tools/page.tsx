@@ -34,7 +34,7 @@ type RunResult = {
 
 const starters: Record<AiTool["id"], string> = {
   prompt_optimizer: "I need a prompt for an AI support agent that answers billing questions, refuses account deletion requests, and returns JSON with next_action.",
-  test_generator: "Feature: users can create API keys, select up to three models, and revoke keys. Generate tests for validation, security, and edge cases.",
+  test_generator: "Feature: users can create API keys, select one model per key, and revoke keys. Generate tests for validation, security, and edge cases.",
   workflow_blueprint: "When a waitlist signup arrives, score the lead with AI, save it to a sheet, and notify the owner if score is above 70.",
   integration_snippet: "Generate a Node.js example that calls DevQuest /v1/responses with DEVQUEST_API_KEY and handles errors cleanly.",
 };
