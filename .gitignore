@@ -51,6 +51,8 @@ test-results/
 devquest-logs.zip
 .devquest-logs-latest/
 devquest-logs-latest.zip
+.devquest-logs-direct/
+devquest-logs-direct.zip
 
 # Local editor files
 .idea/
