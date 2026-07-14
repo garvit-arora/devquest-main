@@ -6,11 +6,11 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from .. import state
 from ..deps import add_notification, public_key, require_user
-from ..key_store import save_api_key
+from ..key_store import load_api_key_by_prefix, save_api_key
 from ..models import ApiKeyCreate, ApiKeyCreated, ApiKeyPublic, ApiKeyRename, GitHubUser
 from ..config import settings
 from ..providers import MODEL_REGISTRY, public_model_ids
-from ..security import KeyRecord, generate_api_key, hash_api_key
+from ..security import KeyRecord, generate_api_key, hash_api_key, verify_api_key
 from ..services.entitlements import refresh_user_repository_status, repository_access_error
 
 router = APIRouter(prefix="/api/api-keys", tags=["api-keys"])
@@ -50,8 +50,13 @@ async def create_api_key(input: ApiKeyCreate, user: GitHubUser = Depends(require
         models=models,
         spending_limit=spending_limit,
     )
+    if not verify_api_key(raw, record.key_hash):
+        raise HTTPException(status_code=500, detail="generated key verification failed")
     state.api_keys[record.prefix] = record
     save_api_key(record)
+    saved_record = load_api_key_by_prefix(record.prefix)
+    if saved_record and not verify_api_key(raw, saved_record.key_hash):
+        raise HTTPException(status_code=500, detail="saved key verification failed")
     add_notification(user.id, "API key created", f"{record.name} can now call the DevQuest gateway if repository access is active.")
     return ApiKeyCreated(raw_key=raw, record=public_key(record))
 
@@ -79,9 +84,14 @@ async def rotate_api_key(key_id: str, user: GitHubUser = Depends(require_user)) 
             state.api_keys.pop(old_prefix)
             record.prefix = raw[:12]
             record.key_hash = hash_api_key(raw)
+            if not verify_api_key(raw, record.key_hash):
+                raise HTTPException(status_code=500, detail="generated key verification failed")
             record.status = "active"
             state.api_keys[record.prefix] = record
             save_api_key(record)
+            saved_record = load_api_key_by_prefix(record.prefix)
+            if saved_record and not verify_api_key(raw, saved_record.key_hash):
+                raise HTTPException(status_code=500, detail="saved key verification failed")
             return ApiKeyCreated(raw_key=raw, record=public_key(record))
     raise HTTPException(status_code=404, detail="key not found")
 

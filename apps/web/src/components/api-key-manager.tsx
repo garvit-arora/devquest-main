@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatedMoriButton } from "@/components/animated-mori-button";
 import { DevQuestLoader } from "@/components/devquest-loader";
 import { apiBaseUrl } from "@/lib/env";
@@ -56,6 +56,12 @@ type DashboardPayload = {
   credit_balance: number;
 };
 
+type RevealedSecret = {
+  rawKey: string;
+  prefix: string;
+  name: string;
+};
+
 const preferredModels = [
   { id: "DeepSeek-V4-Pro", label: "DeepSeek-V4-Pro" },
   { id: "gpt-5.5", label: "gpt-5.5" },
@@ -83,7 +89,7 @@ function fromApiKey(record: ApiKeyResponse): ClientApiKey {
 
 export function ApiKeyManager() {
   const [keys, setKeys] = useState<ClientApiKey[]>([]);
-  const [revealedKey, setRevealedKey] = useState<string | null>(null);
+  const [revealedSecret, setRevealedSecret] = useState<RevealedSecret | null>(null);
   const [name, setName] = useState("");
   const [limit, setLimit] = useState(500);
   const [availableModels, setAvailableModels] = useState<Array<{ alias: string }>>([]);
@@ -99,6 +105,7 @@ export function ApiKeyManager() {
   const [renameTarget, setRenameTarget] = useState<ClientApiKey | null>(null);
   const [revokeTarget, setRevokeTarget] = useState<ClientApiKey | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const createRequestInFlight = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -168,6 +175,7 @@ export function ApiKeyManager() {
   if (isInitialLoading) return <DevQuestLoader />;
 
   async function createKey() {
+    if (createRequestInFlight.current) return;
     if (creditBalance <= 0) {
       setStatusMessage("You need prompt credits before creating an API key.");
       return;
@@ -176,6 +184,7 @@ export function ApiKeyManager() {
       setStatusMessage("Choose at least one model before creating a key.");
       return;
     }
+    createRequestInFlight.current = true;
     setIsCreating(true);
     setStatusMessage("Creating secret key...");
     try {
@@ -192,7 +201,8 @@ export function ApiKeyManager() {
       });
       if (!response.ok) throw new Error("Key creation failed");
       const data = (await response.json()) as { raw_key: string; record: ApiKeyResponse };
-      setRevealedKey(data.raw_key);
+      if (!data.raw_key.startsWith(data.record.prefix)) throw new Error("Key response did not match saved key prefix");
+      setRevealedSecret({ rawKey: data.raw_key, prefix: data.record.prefix, name: data.record.name });
       setKeys((current) => [fromApiKey(data.record), ...current.filter((key) => key.id !== data.record.id)]);
       setStatusMessage("Key created. Copy it now; the raw secret is shown once.");
       setCreateOpen(false);
@@ -201,6 +211,7 @@ export function ApiKeyManager() {
     } catch {
       setStatusMessage("Key creation failed. Confirm GitHub sign-in and the API service.");
     } finally {
+      createRequestInFlight.current = false;
       setIsCreating(false);
     }
   }
@@ -404,7 +415,7 @@ export function ApiKeyManager() {
         />
       ) : null}
 
-      {revealedKey ? <SecretModal rawKey={revealedKey} onClose={() => setRevealedKey(null)} /> : null}
+      {revealedSecret ? <SecretModal secret={revealedSecret} onClose={() => setRevealedSecret(null)} /> : null}
     </div>
   );
 }
@@ -585,11 +596,11 @@ function ConfirmRevokeModal({ keyRecord, onClose, onConfirm }: { keyRecord: Clie
   );
 }
 
-function SecretModal({ rawKey, onClose }: { rawKey: string; onClose: () => void }) {
+function SecretModal({ secret, onClose }: { secret: RevealedSecret; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
 
   async function copyKey() {
-    await navigator.clipboard.writeText(rawKey);
+    await navigator.clipboard.writeText(secret.rawKey);
     setCopied(true);
   }
 
@@ -601,7 +612,11 @@ function SecretModal({ rawKey, onClose }: { rawKey: string; onClose: () => void 
           <h2 className="text-lg font-semibold">Copy this secret key now</h2>
         </div>
         <p className="mt-3 text-sm leading-6 text-[#b4b4b4]">For security, DevQuest only shows the raw API key once. After closing this window, only the masked prefix remains available.</p>
-        <code className="mt-4 block overflow-x-auto rounded-md border border-[#555] bg-[#111] p-4 font-mono text-sm text-white">{rawKey}</code>
+        <div className="mt-4 rounded-md border border-[#555] bg-[#111] p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8f8f8f]">Saved key</p>
+          <p className="mt-1 text-sm text-[#cfcfcf]">{secret.name} · prefix {maskKey(secret.prefix)}</p>
+          <code className="mt-3 block overflow-x-auto font-mono text-sm text-white">{secret.rawKey}</code>
+        </div>
         <div className="mt-5 flex justify-end gap-2">
           <button onClick={copyKey} className="mori-button mori-button-sm inline-flex items-center gap-2">
             <Copy className="size-4" />
