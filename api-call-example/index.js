@@ -1,8 +1,8 @@
-const API_KEY = process.env.DEVQUEST_API_KEY || "paste_your_api_key_here";
+const API_KEY = (process.env.DEVQUEST_API_KEY || "paste_your_api_key_here").trim();
 const BASE_URL = process.env.DEVQUEST_BASE_URL || "https://api.devquest.garvitarora.xyz/v1";
 
 async function main() {
-  if (!API_KEY || API_KEY === "dq_live_5WqBPsAyRDb1A3jSGm6wqI4WXOSoa52x") {
+  if (!API_KEY || API_KEY === "paste_your_api_key_here") {
     throw new Error("Set DEVQUEST_API_KEY or paste your key into api-call-example/index.js.");
   }
 

@@ -58,6 +58,16 @@ def load_api_keys() -> list[KeyRecord]:
     return [record_from_document(document) for document in collection.find({})]
 
 
+def load_api_key_by_prefix(prefix: str) -> KeyRecord | None:
+    collection = api_key_collection()
+    if collection is None:
+        return None
+    document = collection.find_one({"prefix": prefix})
+    if not document:
+        return None
+    return record_from_document(document)
+
+
 def api_key_collection():
     if not database_enabled():
         return None

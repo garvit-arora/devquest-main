@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from .. import state
 from ..config import settings
 from ..deps import now_utc
+from ..key_store import load_api_key_by_prefix
 from ..models import ChatCompletionRequest, LedgerType
 from ..security import KeyRecord, verify_api_key
 from ..activity_store import save_api_request_log
@@ -45,7 +46,9 @@ def authenticate_api_key(authorization: str | None) -> KeyRecord:
         raise HTTPException(status_code=401, detail={"error": {"message": "Missing API key", "type": "invalid_request_error"}})
     raw = authorization.removeprefix("Bearer ").strip()
     prefix = raw[:12]
-    record = state.api_keys.get(prefix)
+    record = state.api_keys.get(prefix) or load_api_key_by_prefix(prefix)
+    if record:
+        state.api_keys[record.prefix] = record
     if not record or record.status != "active" or not verify_api_key(raw, record.key_hash):
         record_platform_log("warning", "gateway_invalid_key", "Gateway request rejected because the API key was invalid.", {"prefix": prefix})
         raise HTTPException(status_code=401, detail={"error": {"message": "Invalid API key", "type": "invalid_api_key"}})
