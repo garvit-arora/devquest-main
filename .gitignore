@@ -1,11 +1,12 @@
 # Operating system
 .DS_Store
 Thumbs.db
-
+api-call-example/
 # Secrets and local environment
 .env
 .env.local
 .env.*.local
+azure-app-settings.local.json
 !.env.example
 !.env.local.example
 
