@@ -2,16 +2,7 @@ name: Trigger auto deployment for devquest
 
 # When this action will be executed
 on:
-  # Automatically trigger it when detected changes in repo
-  push:
-    branches: 
-      [ main ]
-    paths:
-    - '**'
-    - '.github/workflows/devquest-AutoDeployTrigger-aeb9dc83-16c9-4b96-b78e-1a9e5ab37e58.yml'
-
-  # Allow manual trigger 
-  workflow_dispatch:      
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
