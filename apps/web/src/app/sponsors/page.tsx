@@ -44,6 +44,8 @@ const initial = {
   payment_transaction_id: "",
 };
 
+const localSponsorQrUrl = "/qr.png";
+
 export default function SponsorsPage() {
   const [form, setForm] = useState(initial);
   const [owner, setOwner] = useState("");
@@ -56,6 +58,7 @@ export default function SponsorsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const selectedRepo = useMemo(() => repos.find((repo) => repo.id === selectedRepoId) ?? null, [repos, selectedRepoId]);
+  const sponsorQrUrl = fee?.qr_image_url || localSponsorQrUrl;
 
   useEffect(() => {
     async function loadFee() {
@@ -272,14 +275,8 @@ export default function SponsorsPage() {
               </div>
               <div className="mt-5 grid gap-5 lg:grid-cols-[220px_1fr]">
                 <div className="grid place-items-center rounded border border-[#333] bg-[#181818] p-4">
-                  {fee?.qr_image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={fee.qr_image_url} alt="Sponsor review payment QR" className="size-[190px] rounded bg-white p-2" />
-                  ) : (
-                    <div className="grid size-[190px] place-items-center rounded border border-dashed border-[#555] text-center text-xs leading-5 text-[#888]">
-                      Add DEVQUEST_SPONSOR_PAYMENT_QR_URL or DEVQUEST_SPONSOR_PAYMENT_UPI_ID in .env to show the payment QR.
-                    </div>
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={sponsorQrUrl} alt="Sponsor review payment QR" className="size-[190px] rounded bg-white p-2" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold">INR {fee?.amount_inr ?? 100}</p>
