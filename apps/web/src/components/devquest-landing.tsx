@@ -9,10 +9,10 @@ import { useEffect, useState } from "react";
 import { ShapeTransitionLink } from "@/components/shape-transition-link";
 
 const navLinks = [
-  ["Projects", "/app/projects"],
-  ["Rewards", "/app/credits"],
-  ["Models", "/app/playground"],
-  ["Sponsor", "/app/sponsors"],
+  ["Credits", "#earn"],
+  ["Models", "#models"],
+  ["Workflows", "#workflows"],
+  ["Sponsor", "/sponsors"],
 ] as const;
 
 const videoUrl =
@@ -184,18 +184,21 @@ export function DevQuestLanding() {
 function FeatureSlides() {
   const sections = [
     {
+      id: "earn",
       title: "Earn Credits",
       copy: "Star approved repositories, merge meaningful PRs, invite builders, and join sponsor offers to build a real credit balance.",
       accent: "bg-[#f7bdf8] text-black",
       stat: "200 credits per repo",
     },
     {
+      id: "models",
       title: "Use Models",
       copy: "Create a key once, route requests through DevQuest, and use Azure-backed GPT, DeepSeek, and coding models with strict credit limits.",
       accent: "bg-[#ff8709] text-black",
       stat: "1 model per key",
     },
     {
+      id: "workflows",
       title: "Build Flows",
       copy: "Automations turn form submissions, sheet rows, waitlist email, and app events into AI tasks that can store results in your database.",
       accent: "bg-[#101010] text-white",
@@ -206,7 +209,7 @@ function FeatureSlides() {
   return (
     <div className="relative z-10 bg-black px-3 pb-3">
       {sections.map((section) => (
-        <section key={section.title} className={`devquest-feature-section flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden rounded-xl ${section.accent}`}>
+        <section id={section.id} key={section.title} className={`devquest-feature-section flex min-h-[calc(100vh-64px)] scroll-mt-4 items-center justify-center overflow-hidden rounded-xl ${section.accent}`}>
           <div className="devquest-feature-inner flex h-full w-full max-w-7xl flex-col items-center justify-center px-6 py-16 text-center">
             <p className="font-inter text-xs font-bold uppercase tracking-[0.28em] opacity-60">{section.stat}</p>
             <h2 className="mt-5 font-podium text-[clamp(4rem,14vw,15rem)] font-bold uppercase leading-none">{section.title}</h2>
