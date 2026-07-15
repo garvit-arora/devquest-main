@@ -8,12 +8,12 @@ ACHIEVEMENTS = {
     "first_api_request": {
         "title": "First API request",
         "description": "Make the first successful DevQuest API call.",
-        "reward_credits": 25,
+        "reward_credits": 0,
     },
     "first_codex_setup": {
         "title": "First Codex setup",
         "description": "Use DevQuest through the Codex-compatible /v1/responses endpoint.",
-        "reward_credits": 50,
+        "reward_credits": 0,
     },
     "first_workflow_run": {
         "title": "First workflow run",
@@ -23,7 +23,7 @@ ACHIEVEMENTS = {
     "first_100_successful_requests": {
         "title": "First 100 successful requests",
         "description": "Reach 100 successful API requests.",
-        "reward_credits": 150,
+        "reward_credits": 0,
     },
     "first_automation_published": {
         "title": "First automation published",
@@ -85,7 +85,10 @@ def award_achievement(user_id: str, achievement_id: str, metadata: dict[str, obj
         if "duplicate ledger transaction" not in str(exc):
             raise
         return
-    add_notification(user_id, "Achievement unlocked", f"{achievement['title']} added {credits} credits.")
+    if credits > 0:
+        add_notification(user_id, "Achievement unlocked", f"{achievement['title']} added {credits} credits.")
+    else:
+        add_notification(user_id, "Achievement unlocked", f"{achievement['title']} is now complete.")
 
 
 def awarded_achievement_ids(user_id: str) -> set[str]:

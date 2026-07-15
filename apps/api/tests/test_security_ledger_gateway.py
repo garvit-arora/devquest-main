@@ -953,11 +953,11 @@ def test_gateway_charges_max_two_credits_per_request(monkeypatch):
     )
 
     assert response.status_code == 200
-    assert main.ledger.balance(user.id) == 523
+    assert main.ledger.balance(user.id) == 498
     assert main.api_request_logs[-1]["credits"] == 2
     achievements = client.get("/api/achievements")
     assert achievements.status_code == 200
-    assert any(item["id"] == "first_api_request" and item["unlocked"] for item in achievements.json()["data"])
+    assert any(item["id"] == "first_api_request" and item["unlocked"] and item["reward_credits"] == 0 for item in achievements.json()["data"])
 
 
 def test_ai_tools_use_provider_and_charge_credits(monkeypatch):
