@@ -4,7 +4,7 @@ import { Check, Copy, ExternalLink, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const endpointSnippet = `curl https://api.devquest.garvitarora.xyz/v1/responses \\
+const endpointSnippet = `curl https://devquest.garvitarora.xyz/v1/responses \\
   -H "Authorization: Bearer dq_live_your_key" \\
   -H "Content-Type: application/json" \\
   -d '{"model":"gpt-5.6-sol","input":"Explain this repository."}'`;
@@ -15,7 +15,7 @@ model_reasoning_effort = "medium"
 
 [model_providers.devquest]
 name = "DevQuest"
-base_url = "https://api.devquest.garvitarora.xyz/v1"
+base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"`;
 
