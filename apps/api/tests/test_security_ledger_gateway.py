@@ -20,6 +20,7 @@ from apps.api.devquest_api.ledger import CreditLedger
 from apps.api.devquest_api.models import AdminUser, ApprovedRepository, GitHubUser, IssueBounty, LedgerType, PullRequestCampaign, PullRequestReward, QuestVerificationInput, RepositoryEntitlement, SponsorSubmission, SponsorSubmissionCreate, WorkflowExecution
 from apps.api.devquest_api.repositories import load_approved_repositories
 from apps.api.devquest_api.security import KeyRecord, generate_api_key, hash_api_key, sign_session, verify_api_key
+from apps.api.devquest_api.config import MIN_GATEWAY_INPUT_CHARS, load_settings
 from apps.api.devquest_api.verifiers import verifiers
 
 
@@ -107,6 +108,14 @@ def test_token_credit_cost_is_capped_at_two_credits():
     assert credits_for_token_usage(5000) == 2
     assert credits_for_token_usage(10000) == 2
     assert credits_for_token_usage(15000) == 2
+
+
+def test_gateway_input_limit_has_large_floor(monkeypatch):
+    monkeypatch.setenv("DEVQUEST_MAX_INPUT_CHARS", "24000")
+
+    loaded = load_settings()
+
+    assert loaded.max_input_chars == MIN_GATEWAY_INPUT_CHARS
 
 
 def test_duplicate_reward_prevention():

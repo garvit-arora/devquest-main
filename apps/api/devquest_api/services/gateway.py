@@ -112,8 +112,16 @@ def rank_points(user_id: str) -> int:
 def validate_request_limits(request: ChatCompletionRequest) -> None:
     input_chars = sum(len(message.content) for message in request.messages)
     if input_chars > settings.max_input_chars:
-        record_platform_log("warning", "gateway_input_too_large", "Gateway request exceeded the input character limit.", {"input_chars": input_chars})
-        raise HTTPException(status_code=400, detail={"error": {"message": "Input is too large", "type": "invalid_request_error"}})
+        record_platform_log("warning", "gateway_input_too_large", "Gateway request exceeded the input character limit.", {"input_chars": input_chars, "max_input_chars": settings.max_input_chars})
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "message": f"Input is too large. DevQuest accepts up to {settings.max_input_chars} characters for one request.",
+                    "type": "invalid_request_error",
+                }
+            },
+        )
 
 
 def credits_for_token_usage(total_tokens: int | None) -> int:
