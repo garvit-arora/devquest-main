@@ -37,6 +37,8 @@ wire_api = "responses"
 
 Use this exact base URL for the current production setup. Do not use `https://api.devquest.garvitarora.xyz/v1` until the API subdomain has a valid certificate, and do not type `/reponses`; Codex will call `/responses` automatically because `wire_api = "responses"`.
 
+Keep the top-level `model = "gpt-5.6-sol"` line in the file. If your API key was created for a different model, DevQuest will route the request through the one model selected on that key.
+
 In the IDE extension, you can also open the same file from Gear icon, Codex Settings, Open config.toml.
 
 ## 3. Set your API key

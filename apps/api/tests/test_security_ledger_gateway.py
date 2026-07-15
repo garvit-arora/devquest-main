@@ -762,25 +762,39 @@ def test_create_rename_rotate_and_revoke_key(monkeypatch):
     assert rejected.status_code == 401
 
 
-def test_key_model_restriction(monkeypatch):
+def test_key_uses_selected_model_when_client_model_differs(monkeypatch):
     client, _user = authenticated_client()
     add_repo()
 
     async def verified(_user, _repo):
         return "verified"
 
+    async def chat_completion(request):
+        return {
+            "id": "chatcmpl_selected_model",
+            "object": "chat.completion",
+            "model": request.model,
+            "choices": [{"message": {"role": "assistant", "content": request.model}, "finish_reason": "stop"}],
+            "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+        }
+
     monkeypatch.setattr(entitlement_service, "check_github_star", verified)
+    monkeypatch.setattr(main.provider, "chat_completion", chat_completion)
     client.post("/api/projects/owner/repo/verify")
+    main.MODEL_REGISTRY["devquest-fast"].availability = "available"
+    main.MODEL_REGISTRY["devquest-fast"].upstream_model = "azure-fast"
     main.MODEL_REGISTRY["devquest-code"].availability = "available"
     main.MODEL_REGISTRY["devquest-code"].upstream_model = "azure-code"
     created = client.post("/api/api-keys", json={"name": "restricted", "models": ["devquest-fast"]}).json()
 
-    restricted = client.post(
+    response = client.post(
         "/v1/chat/completions",
         headers={"Authorization": f"Bearer {created['raw_key']}"},
         json={"model": "devquest-code", "messages": [{"role": "user", "content": "hi"}]},
     )
-    assert restricted.status_code == 403
+    assert response.status_code == 200
+    assert response.json()["model"] == "devquest-fast"
+    assert response.json()["choices"][0]["message"]["content"] == "devquest-fast"
 
 
 def test_api_key_allows_one_model(monkeypatch):
@@ -1096,7 +1110,7 @@ def test_responses_endpoint_returns_response_shape_for_codex(monkeypatch):
     response = client.post(
         "/v1/responses",
         headers={"Authorization": f"Bearer {created['raw_key']}"},
-        json={"model": "devquest-code", "instructions": "You help with code.", "input": "Inspect this repo."},
+        json={"model": "gpt-5.6-sol", "instructions": "You help with code.", "input": "Inspect this repo."},
     )
 
     assert response.status_code == 200

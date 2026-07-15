@@ -31,13 +31,12 @@ async def chat_completions(request: ChatCompletionRequest, authorization: str | 
     await ensure_repository_access(key.user_id, force_refresh=True)
     enforce_rate_limits(key)
     validate_request_limits(request)
+    request.model = resolve_model_for_key(request.model, key)
     model = MODEL_REGISTRY.get(request.model)
     if not model:
         raise HTTPException(status_code=404, detail={"error": {"message": "Model alias not found", "type": "invalid_request_error"}})
     if model.availability in {"maintenance", "unconfigured"}:
         raise HTTPException(status_code=503, detail={"error": {"message": "Model provider is not configured for this alias", "type": "model_unavailable"}})
-    if request.model not in key.models:
-        raise HTTPException(status_code=403, detail={"error": {"message": "Key is restricted from this model", "type": "permission_error"}})
 
     request_id = f"req_{uuid4().hex[:12]}"
     estimated = estimated_request_credits(request)
@@ -88,13 +87,13 @@ async def responses(request: ResponsesCreateRequest, authorization: str | None =
     await ensure_repository_access(key.user_id, force_refresh=True)
     enforce_rate_limits(key)
     validate_request_limits(chat_request)
+    chat_request.model = resolve_model_for_key(chat_request.model, key)
+    request.model = chat_request.model
     model = MODEL_REGISTRY.get(chat_request.model)
     if not model:
         raise HTTPException(status_code=404, detail={"error": {"message": "Model alias not found", "type": "invalid_request_error"}})
     if model.availability in {"maintenance", "unconfigured"}:
         raise HTTPException(status_code=503, detail={"error": {"message": "Model provider is not configured for this alias", "type": "model_unavailable"}})
-    if chat_request.model not in key.models:
-        raise HTTPException(status_code=403, detail={"error": {"message": "Key is restricted from this model", "type": "permission_error"}})
 
     request_id = f"req_{uuid4().hex[:12]}"
     response_id = f"resp_{uuid4().hex[:24]}"
@@ -148,6 +147,16 @@ def responses_to_chat_request(request: ResponsesCreateRequest) -> ChatCompletion
         tools=request.tools,
         tool_choice=request.tool_choice,
     )
+
+
+def resolve_model_for_key(requested_model: str, key) -> str:
+    if requested_model in key.models:
+        return requested_model
+    if len(key.models) == 1:
+        selected_model = key.models[0]
+        if selected_model in MODEL_REGISTRY:
+            return selected_model
+    raise HTTPException(status_code=403, detail={"error": {"message": "Key is restricted from this model", "type": "permission_error"}})
 
 
 def response_input_to_messages(input_value: str | list[Any] | None) -> list[ChatMessage]:

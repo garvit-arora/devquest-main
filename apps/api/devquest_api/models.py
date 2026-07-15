@@ -104,7 +104,7 @@ class ChatMessage(BaseModel):
 
 
 class ChatCompletionRequest(BaseModel):
-    model: str
+    model: str = ""
     messages: list[ChatMessage]
     stream: bool = False
     temperature: float = 0.4
@@ -114,7 +114,7 @@ class ChatCompletionRequest(BaseModel):
 
 
 class ResponsesCreateRequest(BaseModel):
-    model: str
+    model: str = ""
     input: str | list[Any] | None = None
     instructions: str | None = None
     stream: bool = False
