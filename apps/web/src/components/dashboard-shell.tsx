@@ -152,13 +152,13 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-[#181818] text-[#f4f4f4]" onClickCapture={refreshStarsOnInteraction}>
       <TopBar user={user} dashboardStatus={dashboardStatus} />
 
-      <aside className={cn("fixed bottom-0 left-0 top-12 z-40 hidden border-r border-[#2e2e2e] bg-[#202020] transition-[width] duration-300 ease-out lg:flex", sidebarCollapsed ? "w-16" : "w-[216px]")}>
+      <aside className={cn("fixed bottom-0 left-0 top-12 z-40 hidden min-h-0 overflow-hidden border-r border-[#2e2e2e] bg-[#202020] transition-[width] duration-300 ease-out lg:flex", sidebarCollapsed ? "w-16" : "w-[216px]")}>
         <SidebarContent user={user} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed((current) => !current)} onProfile={() => setSettingsOpen(true)} />
       </aside>
 
       {mobileOpen ? (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur lg:hidden">
-          <aside className="h-full w-[min(86vw,280px)] border-r border-[#2e2e2e] bg-[#202020] pt-12">
+          <aside className="h-full min-h-0 w-[min(86vw,280px)] overflow-hidden border-r border-[#2e2e2e] bg-[#202020] pt-12">
             <SidebarContent user={user} collapsed={false} onToggle={() => setMobileOpen(false)} onProfile={() => setSettingsOpen(true)} />
           </aside>
         </div>
@@ -235,8 +235,8 @@ function SidebarContent({ user, collapsed, onToggle, onProfile }: { user: AuthUs
   const initials = user?.login.slice(0, 2).toUpperCase() ?? "DQ";
 
   return (
-    <div className={cn("flex h-full w-full flex-col justify-between pb-2 pt-3 transition-[padding] duration-300", collapsed ? "px-2" : "px-3")}>
-      <nav className="grid gap-1">
+    <div className={cn("flex h-full min-h-0 w-full flex-col pb-2 pt-3 transition-[padding] duration-300", collapsed ? "px-2" : "px-3")}>
+      <nav className={cn("grid min-h-0 flex-1 content-start gap-1 overflow-y-auto overscroll-contain [scrollbar-gutter:stable]", collapsed ? "pr-0" : "pr-1")}>
         {sidebar.map(([label, href, Icon]) => {
           const external = href.startsWith("http");
           const active = !external && (href === "/app" ? pathname === href : pathname.startsWith(href));
@@ -265,7 +265,7 @@ function SidebarContent({ user, collapsed, onToggle, onProfile }: { user: AuthUs
         })}
       </nav>
 
-      <div className={cn("flex items-center gap-2", collapsed ? "flex-col" : "")}>
+      <div className={cn("mt-2 flex shrink-0 items-center gap-2 border-t border-[#2e2e2e] pt-2", collapsed ? "flex-col" : "")}>
         <button onClick={onProfile} title={collapsed ? displayName : undefined} className={cn("min-w-0 rounded text-sm font-medium text-[#d8d8d8] hover:bg-[#2b2b2b] hover:text-white", collapsed ? "grid size-9 place-items-center" : "flex h-9 flex-1 items-center gap-2 px-2")}>
           {user?.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
