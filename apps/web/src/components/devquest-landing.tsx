@@ -54,20 +54,6 @@ export function DevQuestLanding() {
 
   return (
     <main id="main" className="relative min-h-screen overflow-x-hidden bg-black text-white">
-      <video
-        className="absolute inset-0 h-full w-full object-cover opacity-[0.44]"
-        src={videoUrl}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-black/48" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.82),rgba(0,0,0,0.48),rgba(0,0,0,0.22))]" />
-      <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/80 to-transparent" />
-
       <header className="relative z-20 flex items-center justify-between px-6 py-5 sm:px-10 lg:px-16 lg:py-7">
         <Link href="/" className="inline-flex items-center gap-3 font-podium text-2xl font-bold uppercase tracking-wider text-white sm:text-3xl">
           <span className="grid size-10 place-items-center rounded-xl border border-white/15 bg-white/8 p-1.5 backdrop-blur">
@@ -104,50 +90,89 @@ export function DevQuestLanding() {
 
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-      <section className="relative z-10 flex min-h-[calc(100vh-88px)] items-center px-6 pb-12 pt-4 sm:px-10 lg:px-16">
-        <div className="max-w-5xl">
-          <div className="animate-fade-up mb-6 flex items-center gap-3 lg:mb-8">
-            <Crown className="size-4 text-white/70" />
-            <p className="font-inter text-xs font-semibold uppercase tracking-[0.3em] text-white/70 sm:text-sm">
-              Star-Verified Model Access
+      <section className="relative z-10 min-h-[calc(100vh-88px)] overflow-hidden px-6 pb-12 pt-4 sm:px-10 lg:px-16">
+        <video
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.36]"
+          src={videoUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/46" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88),rgba(0,0,0,0.52),rgba(0,0,0,0.28))]" />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/85 to-transparent" />
+
+        <div className="relative z-10 grid min-h-[calc(100vh-104px)] items-center gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(360px,0.72fr)] xl:gap-16">
+          <div className="max-w-5xl">
+            <div className="animate-fade-up mb-6 flex items-center gap-3 lg:mb-8">
+              <Crown className="size-4 text-white/70" />
+              <p className="font-inter text-xs font-semibold uppercase tracking-[0.3em] text-white/70 sm:text-sm">
+                Star-Verified Model Access
+              </p>
+            </div>
+
+            <h1 className="animate-fade-up-delay-1 font-podium text-[clamp(2.8rem,8vw,7rem)] font-bold uppercase leading-[0.92] tracking-tight text-white">
+              <span className="block">Verify.</span>
+              <span className="block">Reward.</span>
+              <span className="block">Access.</span>
+            </h1>
+
+            <p className="animate-fade-up-delay-2 mt-6 max-w-md font-inter text-sm leading-relaxed text-white/70 sm:text-base lg:mt-8">
+              We verify GitHub repo stars
+              <br />
+              then grant model credits --
+              <br />
+              <strong className="font-bold text-white">real API.</strong>
             </p>
-          </div>
 
-          <h1 className="animate-fade-up-delay-1 font-podium text-[clamp(2.8rem,8vw,7rem)] font-bold uppercase leading-[0.92] tracking-tight text-white">
-            <span className="block">Verify.</span>
-            <span className="block">Reward.</span>
-            <span className="block">Access.</span>
-          </h1>
-
-          <p className="animate-fade-up-delay-2 mt-6 max-w-md font-inter text-sm leading-relaxed text-white/70 sm:text-base lg:mt-8">
-            We verify GitHub repo stars
-            <br />
-            then grant model credits --
-            <br />
-            <strong className="font-bold text-white">real API.</strong>
-          </p>
-
-          <div className="animate-fade-up-delay-3 mt-8 flex flex-wrap items-center gap-4 sm:gap-6 lg:mt-10">
-            <ShapeTransitionLink
-              href="/signin"
-              className="mori-button mori-button-lg group inline-flex items-center gap-3"
-            >
-              Start Quest
-              <ArrowUpRight className="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </ShapeTransitionLink>
-            <div className="hidden items-center gap-3 sm:flex">
-              <Award className="size-8 text-white/50" />
-              <div className="font-inter text-xs font-semibold uppercase tracking-wider text-white/60">
-                <p>Star-Based</p>
-                <p>Model Access</p>
+            <div className="animate-fade-up-delay-3 mt-8 flex flex-wrap items-center gap-4 sm:gap-6 lg:mt-10">
+              <ShapeTransitionLink
+                href="/signin"
+                className="mori-button mori-button-lg group inline-flex items-center gap-3"
+              >
+                Start Quest
+                <ArrowUpRight className="size-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </ShapeTransitionLink>
+              <div className="hidden items-center gap-3 sm:flex">
+                <Award className="size-8 text-white/50" />
+                <div className="font-inter text-xs font-semibold uppercase tracking-wider text-white/60">
+                  <p>Star-Based</p>
+                  <p>Model Access</p>
+                </div>
               </div>
+            </div>
+
+            <div id="api" className="animate-fade-up-delay-4 mt-8 flex flex-wrap gap-6 sm:mt-10 sm:gap-12 lg:mt-14 lg:gap-16">
+              <Stat value="200" label="Credits Per Repo" />
+              <Stat value="1" label="Key Shown Once" />
+              <Stat value="10m" label="Star Recheck Time" />
             </div>
           </div>
 
-          <div id="api" className="animate-fade-up-delay-4 mt-8 flex flex-wrap gap-6 sm:mt-10 sm:gap-12 lg:mt-14 lg:gap-16">
-            <Stat value="200" label="Credits Per Repo" />
-            <Stat value="1" label="Key Shown Once" />
-            <Stat value="10m" label="Star Recheck Time" />
+          <div className="animate-fade-up-delay-2 relative mx-auto w-full max-w-[620px] lg:mx-0">
+            <div className="relative overflow-hidden rounded-[10px] border border-white/14 bg-black shadow-[0_30px_120px_rgba(247,189,248,0.16)]">
+              <div className="flex h-9 items-center justify-between border-b border-white/12 bg-white/[0.06] px-4">
+                <div className="flex gap-1.5">
+                  <span className="size-2.5 rounded-full bg-[#ff8709]" />
+                  <span className="size-2.5 rounded-full bg-[#ffd9b0]" />
+                  <span className="size-2.5 rounded-full bg-[#f7bdf8]" />
+                </div>
+                <p className="font-inter text-[10px] font-semibold uppercase tracking-[0.24em] text-white/48">Live Quest</p>
+              </div>
+              <video
+                className="aspect-video w-full bg-black object-cover object-center"
+                src={videoUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label="DevQuest AI landing preview"
+              />
+            </div>
           </div>
         </div>
       </section>
