@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ResponsiveFlairSection } from "@/components/responsive-flair-section";
 import { ShapeTransitionLink } from "@/components/shape-transition-link";
 
 const navLinks = [
@@ -177,7 +176,6 @@ export function DevQuestLanding() {
         </div>
       </section>
       <FeatureSlides />
-      <ResponsiveFlairSection />
       <LandingFooter />
     </main>
   );
@@ -202,12 +200,6 @@ function FeatureSlides() {
       copy: "Automations turn form submissions, sheet rows, waitlist email, and app events into AI tasks that can store results in your database.",
       accent: "bg-[#101010] text-white",
       stat: "n8n-style canvas",
-    },
-    {
-      title: "Ship Faster",
-      copy: "Use DevQuest in Codex CLI and compatible IDE extensions through the Responses API, with medium reasoning by default.",
-      accent: "bg-[#ffd9b0] text-black",
-      stat: "Codex ready",
     },
   ];
 
