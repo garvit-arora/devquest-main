@@ -16,7 +16,7 @@ DevQuest AI is a GitHub-star-gated AI API platform. Users sign in with GitHub, s
 
 - Document user-facing setup, API usage, Codex configuration, models, credits, and troubleshooting.
 - Do not document private admin credentials or internal deployment secrets.
-- Make examples work with `https://api.devquest.garvitarora.xyz/v1` for production and `http://localhost:8000/v1` for local development.
+- Make examples work with `https://devquest.garvitarora.xyz/v1` for production and `http://localhost:8000/v1` for local development.
 
 ## Useful pages
 

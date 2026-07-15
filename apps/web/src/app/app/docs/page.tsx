@@ -4,10 +4,23 @@ import { Check, Copy, ExternalLink, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const endpointSnippet = `curl https://devquest.garvitarora.xyz/v1/responses \\
-  -H "Authorization: Bearer dq_live_your_key" \\
-  -H "Content-Type: application/json" \\
-  -d '{"model":"gpt-5.6-sol","input":"Explain this repository."}'`;
+const endpointSnippet = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+
+const response = await fetch("https://devquest.garvitarora.xyz/v1/responses", {
+  method: "POST",
+  headers: {
+    Authorization: \`Bearer \${process.env.DEVQUEST_API_KEY}\`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    model: "gpt-5.6-sol",
+    input: "Say hello from DevQuest AI in one short sentence.",
+    max_output_tokens: 256,
+  }),
+});
+
+const data = await response.json();
+console.log(data.output?.[0]?.content?.[0]?.text);`;
 
 const codexConfig = `model = "gpt-5.6-sol"
 model_provider = "devquest"
@@ -19,8 +32,8 @@ base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"`;
 
-const powerShellSetup = `$env:DEVQUEST_API_KEY = "dq_agent_xxxxxxxxx"
-setx DEVQUEST_API_KEY "dq_agent_xxxxxxxxx"`;
+const powerShellSetup = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+setx DEVQUEST_API_KEY "dq_live_your_key"`;
 
 const launchCodex = `codex`;
 

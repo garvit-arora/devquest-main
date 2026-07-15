@@ -371,21 +371,35 @@ function buildCodeSnippet(kind: "integration" | "cli", model: string, prompt: st
   };
 
   if (kind === "integration") {
-    return `const response = await fetch("${apiBaseUrl()}/v1/responses", {
+    return `const API_KEY = process.env.DEVQUEST_API_KEY;
+
+if (!API_KEY) {
+  throw new Error("Set DEVQUEST_API_KEY before calling DevQuest.");
+}
+
+const response = await fetch("${apiBaseUrl()}/v1/responses", {
   method: "POST",
   headers: {
-    "Authorization": "Bearer YOUR_DEVQUEST_API_KEY",
+    "Authorization": \`Bearer \${API_KEY}\`,
     "Content-Type": "application/json"
   },
   body: JSON.stringify(${JSON.stringify(body, null, 2)})
 });
 
+if (!response.ok) {
+  throw new Error(await response.text());
+}
+
 const result = await response.json();
-console.log(result.output?.[0]?.content?.[0]?.text);`;
+const text = result.output?.[0]?.content?.[0]?.text;
+
+console.log(text);`;
   }
 
-  return `curl -X POST ${apiBaseUrl()}/v1/responses \\
-  -H "Authorization: Bearer YOUR_DEVQUEST_API_KEY" \\
+  return `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+
+curl -X POST ${apiBaseUrl()}/v1/responses \\
+  -H "Authorization: Bearer $env:DEVQUEST_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '${JSON.stringify(body, null, 2)}'`;
 }

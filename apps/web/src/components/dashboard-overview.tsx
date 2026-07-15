@@ -185,14 +185,16 @@ base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"`;
 
-const codexPowerShell = `$env:DEVQUEST_API_KEY = "dq_agent_xxxxxxxxx"
-setx DEVQUEST_API_KEY "dq_agent_xxxxxxxxx"
+const codexPowerShell = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+setx DEVQUEST_API_KEY "dq_live_your_key"
 codex`;
 
-const curlExample = `curl https://devquest.garvitarora.xyz/v1/responses \\
-  -H "Authorization: Bearer dq_live_your_key" \\
-  -H "Content-Type: application/json" \\
-  -d '{"model":"gpt-5.6-sol","input":"Explain this repository."}'`;
+const curlExample = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+node index.js
+
+# Expected success:
+# status: completed
+# text: Hello from DevQuest AI!`;
 
 function AgentPromptPanel({ copied, onCopy }: { copied: string; onCopy: (value: string) => void }) {
   async function copy(label: string, value: string) {

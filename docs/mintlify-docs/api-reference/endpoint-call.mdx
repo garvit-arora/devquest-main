@@ -14,7 +14,7 @@ Use this page after you have starred an approved repository and created an API k
 For production:
 
 ```text
-https://api.devquest.garvitarora.xyz/v1
+https://devquest.garvitarora.xyz/v1
 ```
 
 For local development:
@@ -40,7 +40,7 @@ export DEVQUEST_API_KEY="dq_live_your_key"
 Use `POST /v1/responses` for Codex-compatible clients and modern response workflows.
 
 ```bash cURL
-curl https://api.devquest.garvitarora.xyz/v1/responses \
+curl https://devquest.garvitarora.xyz/v1/responses \
   -H "Authorization: Bearer $DEVQUEST_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -52,7 +52,7 @@ curl https://api.devquest.garvitarora.xyz/v1/responses \
 ```
 
 ```ts JavaScript
-const response = await fetch("https://api.devquest.garvitarora.xyz/v1/responses", {
+const response = await fetch("https://devquest.garvitarora.xyz/v1/responses", {
   method: "POST",
   headers: {
     Authorization: `Bearer ${process.env.DEVQUEST_API_KEY}`,
@@ -79,7 +79,7 @@ import os
 import requests
 
 response = requests.post(
-    "https://api.devquest.garvitarora.xyz/v1/responses",
+    "https://devquest.garvitarora.xyz/v1/responses",
     headers={
         "Authorization": f"Bearer {os.environ['DEVQUEST_API_KEY']}",
         "Content-Type": "application/json",
@@ -103,7 +103,7 @@ print(data["output"][0]["content"][0]["text"])
 Use `POST /v1/chat/completions` when you need OpenAI-compatible chat-style messages.
 
 ```bash cURL
-curl https://api.devquest.garvitarora.xyz/v1/chat/completions \
+curl https://devquest.garvitarora.xyz/v1/chat/completions \
   -H "Authorization: Bearer $DEVQUEST_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -120,7 +120,7 @@ curl https://api.devquest.garvitarora.xyz/v1/chat/completions \
 Set `stream` to `true` to receive server-sent events.
 
 ```bash cURL
-curl https://api.devquest.garvitarora.xyz/v1/responses \
+curl https://devquest.garvitarora.xyz/v1/responses \
   -N \
   -H "Authorization: Bearer $DEVQUEST_API_KEY" \
   -H "Content-Type: application/json" \

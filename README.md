@@ -131,10 +131,10 @@ MONGODB_URI=mongodb://garvit:YOUR_REAL_PASSWORD@learning-shard-00-00.3u2np.mongo
 ## API Usage
 
 ```bash
-curl https://api.devquest.garvitarora.xyz/v1/chat/completions \
+curl https://devquest.garvitarora.xyz/v1/responses \
   -H "Authorization: Bearer dq_live_your_key" \
   -H "Content-Type: application/json" \
-  -d '{"model":"devquest-fast","messages":[{"role":"user","content":"Explain this code."}]}'
+  -d '{"model":"gpt-5.6-sol","input":"Say hello from DevQuest AI in one short sentence.","max_output_tokens":256}'
 ```
 
 Requests are rejected before Azure is called if the key is revoked, credits are exhausted, rate limits are exceeded, the model is unavailable, or the user has no verified starred approved repository.

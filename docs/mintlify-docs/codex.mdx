@@ -14,7 +14,7 @@ model_reasoning_effort = "medium"
 
 [model_providers.devquest]
 name = "DevQuest"
-base_url = "https://api.devquest.garvitarora.xyz/v1"
+base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"
 ```
@@ -26,13 +26,13 @@ In the IDE extension, you can also open the same file from Codex Settings.
 Windows PowerShell for the current terminal:
 
 ```powershell
-$env:DEVQUEST_API_KEY = "dq_agent_xxxxxxxxx"
+$env:DEVQUEST_API_KEY = "dq_live_your_key"
 ```
 
 Windows PowerShell for future terminals:
 
 ```powershell
-setx DEVQUEST_API_KEY "dq_agent_xxxxxxxxx"
+setx DEVQUEST_API_KEY "dq_live_your_key"
 ```
 
 Restart VS Code, Cursor, Windsurf, or your VS Code fork afterward so the persistent variable is visible.
