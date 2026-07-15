@@ -13,6 +13,7 @@ from apps.api.devquest_api.routers import auth as auth_router
 from apps.api.devquest_api.routers import issue_bounties as issue_bounties_router
 from apps.api.devquest_api.routers import pull_requests as pull_requests_router
 from apps.api.devquest_api.services import entitlements as entitlement_service
+from apps.api.devquest_api.services.gateway import credits_for_token_usage
 from apps.api.devquest_api.services.referrals import award_pending_referral_after_github_connect, create_referral_click, record_pending_referral_from_click, referral_code_for_user_id
 from apps.api.devquest_api.key_store import api_key_document
 from apps.api.devquest_api.ledger import CreditLedger
@@ -87,6 +88,25 @@ def test_credit_reservation_and_settlement():
     assert reserved.status == "pending"
     ledger.settle(user_id="u1", reserved=reserved, actual_amount=12, request_id="req1")
     assert ledger.balance("u1") == 88
+
+
+def test_credit_settlement_records_token_overage():
+    ledger = CreditLedger()
+    ledger.append(user_id="u1", amount=100, transaction_type=LedgerType.repository_star_reward, idempotency_key="signup")
+    reserved = ledger.reserve(user_id="u1", amount=2, request_id="req1", metadata={"key_prefix": "dq_live_test"})
+
+    ledger.settle(user_id="u1", reserved=reserved, actual_amount=4, request_id="req1")
+
+    assert ledger.balance("u1") == 96
+    assert ledger.records[-1].amount == -2
+    assert ledger.records[-1].metadata["source"] == "token_overage"
+
+
+def test_token_credit_tiers_have_no_fixed_two_credit_cap():
+    assert credits_for_token_usage(4999) == 2
+    assert credits_for_token_usage(5000) == 3
+    assert credits_for_token_usage(10000) == 4
+    assert credits_for_token_usage(15000) == 5
 
 
 def test_duplicate_reward_prevention():
@@ -754,7 +774,7 @@ def test_key_model_restriction(monkeypatch):
     assert restricted.status_code == 403
 
 
-def test_api_key_allows_at_most_three_models(monkeypatch):
+def test_api_key_allows_one_model(monkeypatch):
     client, _user = authenticated_client()
     add_repo()
 
@@ -766,14 +786,14 @@ def test_api_key_allows_at_most_three_models(monkeypatch):
 
     accepted = client.post(
         "/api/api-keys",
-        json={"name": "three models", "models": ["devquest-fast", "devquest-reason", "devquest-code"]},
+        json={"name": "one model", "models": ["devquest-fast"]},
     )
     rejected = client.post(
         "/api/api-keys",
-        json={"name": "too many", "models": ["devquest-fast", "devquest-reason", "devquest-code", "devquest-deepseek"]},
+        json={"name": "too many", "models": ["devquest-fast", "devquest-reason"]},
     )
     assert accepted.status_code == 200
-    assert accepted.json()["record"]["models"] == ["devquest-fast", "devquest-reason", "devquest-code"]
+    assert accepted.json()["record"]["models"] == ["devquest-fast"]
     assert rejected.status_code == 400
 
 
@@ -922,7 +942,7 @@ def test_ready_workflow_messages_cover_email_csv_and_repo_star(monkeypatch):
     assert main.ledger.balance(user.id) == 523
 
 
-def test_gateway_charges_max_two_credits_per_request(monkeypatch):
+def test_gateway_charges_dynamic_token_tier_credits(monkeypatch):
     client, user = authenticated_client()
     add_repo()
 
@@ -953,8 +973,11 @@ def test_gateway_charges_max_two_credits_per_request(monkeypatch):
     )
 
     assert response.status_code == 200
-    assert main.ledger.balance(user.id) == 498
-    assert main.api_request_logs[-1]["credits"] == 2
+    assert main.ledger.balance(user.id) == 494
+    assert main.api_request_logs[-1]["credits"] == 6
+    overage_records = [record for record in main.ledger.records if record.metadata.get("source") == "token_overage"]
+    assert len(overage_records) == 1
+    assert overage_records[0].amount == -4
     achievements = client.get("/api/achievements")
     assert achievements.status_code == 200
     assert any(item["id"] == "first_api_request" and item["unlocked"] and item["reward_credits"] == 0 for item in achievements.json()["data"])
@@ -1074,7 +1097,7 @@ def test_responses_endpoint_returns_response_shape_for_codex(monkeypatch):
     assert payload["model"] == "devquest-code"
     assert payload["output"][0]["content"][0]["text"] == "Codex ready"
     assert payload["usage"]["input_tokens"] == 11
-    assert main.ledger.balance(user.id) == 573
+    assert main.ledger.balance(user.id) == 498
     assert len([record for record in main.ledger.records if record.type == LedgerType.achievement_reward]) == 2
 
 

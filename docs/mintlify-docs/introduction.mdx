@@ -10,8 +10,8 @@ Users sign in with GitHub, star approved repositories, receive credits, create a
 ## Credit rules
 
 - Starring one approved repository grants 500 credits.
-- Every successful model request costs at most 2 credits.
-- Large token usage still costs a maximum of 2 credits per request.
+- Every successful model request reserves 2 credits.
+- Large token usage is settled after the response: 5,000 tokens costs 3 credits, 10,000 costs 4 credits, and each extra 5,000 tokens adds 1 credit.
 - If a user unstars the required repository, gateway access is blocked.
 
 ## Model rules

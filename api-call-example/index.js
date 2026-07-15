@@ -29,7 +29,6 @@ async function main() {
     body: JSON.stringify({
       model: "gpt-5.6-sol",
       input: "Write a concise HTML CSS JS TODO app. Return visible code only.",
-      max_output_tokens: 2048,
     }),
   });
 

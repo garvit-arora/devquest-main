@@ -68,11 +68,28 @@ class CreditLedger:
         )
 
     def settle(self, *, user_id: str, reserved: LedgerRecord, actual_amount: int, request_id: str) -> LedgerRecord:
+        reserved_amount = abs(reserved.amount)
         reserved.status = "settled"
         reserved.type = LedgerType.api_usage_settled
         reserved.settled_at = datetime.utcnow()
         save_ledger_record(reserved)
-        unused = abs(reserved.amount) - actual_amount
+        overage = actual_amount - reserved_amount
+        if overage > 0:
+            self.append(
+                user_id=user_id,
+                amount=-overage,
+                transaction_type=LedgerType.api_usage_settled,
+                related_request_id=request_id,
+                metadata={
+                    **reserved.metadata,
+                    "source": "token_overage",
+                    "reserved_credits": reserved_amount,
+                    "actual_credits": actual_amount,
+                },
+                idempotency_key=f"overage:{request_id}",
+            )
+            return reserved
+        unused = reserved_amount - actual_amount
         if unused > 0:
             return self.append(
                 user_id=user_id,

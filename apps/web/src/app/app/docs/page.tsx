@@ -15,7 +15,6 @@ const response = await fetch("https://devquest.garvitarora.xyz/v1/responses", {
   body: JSON.stringify({
     model: "gpt-5.6-sol",
     input: "Say hello from DevQuest AI in one short sentence.",
-    max_output_tokens: 256,
   }),
 });
 

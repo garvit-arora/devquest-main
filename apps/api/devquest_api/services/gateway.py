@@ -14,6 +14,9 @@ from ..activity_store import save_api_request_log
 from .audit import record_platform_log
 from .achievements import award_api_usage_achievements
 
+BASE_API_REQUEST_CREDITS = 2
+TOKEN_CREDIT_STEP = 5000
+
 RANK_RATE_LIMITS = [
     (12000, 30, 5000),
     (5000, 20, 2500),
@@ -112,9 +115,39 @@ def validate_request_limits(request: ChatCompletionRequest) -> None:
     if input_chars > settings.max_input_chars:
         record_platform_log("warning", "gateway_input_too_large", "Gateway request exceeded the input character limit.", {"input_chars": input_chars})
         raise HTTPException(status_code=400, detail={"error": {"message": "Input is too large", "type": "invalid_request_error"}})
-    if request.max_tokens and request.max_tokens > settings.max_output_tokens:
-        record_platform_log("warning", "gateway_output_too_large", "Gateway request exceeded the max output token limit.", {"max_tokens": request.max_tokens})
-        raise HTTPException(status_code=400, detail={"error": {"message": "Max output tokens exceeds platform limit", "type": "invalid_request_error"}})
+
+
+def credits_for_token_usage(total_tokens: int | None) -> int:
+    if not total_tokens or total_tokens < TOKEN_CREDIT_STEP:
+        return BASE_API_REQUEST_CREDITS
+    return BASE_API_REQUEST_CREDITS + max(0, total_tokens // TOKEN_CREDIT_STEP)
+
+
+def estimated_request_credits(request: ChatCompletionRequest) -> int:
+    input_tokens = max(1, sum(len(message.content) for message in request.messages) // 4)
+    requested_tokens = input_tokens + max(0, request.max_tokens or 0)
+    return credits_for_token_usage(requested_tokens)
+
+
+def response_total_tokens(response: dict[str, object] | None) -> int:
+    usage = response.get("usage", {}) if response else {}
+    if not isinstance(usage, dict):
+        return 0
+    input_tokens = safe_int(usage.get("input_tokens", usage.get("prompt_tokens", 0)))
+    output_tokens = safe_int(usage.get("output_tokens", usage.get("completion_tokens", 0)))
+    return safe_int(usage.get("total_tokens", input_tokens + output_tokens))
+
+
+def credits_for_response(response: dict[str, object] | None, *, default: int) -> int:
+    total_tokens = response_total_tokens(response)
+    return credits_for_token_usage(total_tokens) if total_tokens else default
+
+
+def safe_int(value: object) -> int:
+    try:
+        return int(value or 0)
+    except (TypeError, ValueError):
+        return 0
 
 
 def enforce_key_credit_limit(record: KeyRecord, estimated_credits: int) -> None:
@@ -130,9 +163,9 @@ def enforce_key_credit_limit(record: KeyRecord, estimated_credits: int) -> None:
 
 def record_api_usage(key: KeyRecord, request: ChatCompletionRequest, request_id: str, credits: int, started: float, status: int, response: dict[str, object] | None = None, *, api_kind: str = "chat") -> None:
     usage = response.get("usage", {}) if response else {}
-    prompt_tokens = int(usage.get("prompt_tokens", 0)) if isinstance(usage, dict) else 0
-    completion_tokens = int(usage.get("completion_tokens", 0)) if isinstance(usage, dict) else 0
-    total_tokens = int(usage.get("total_tokens", prompt_tokens + completion_tokens)) if isinstance(usage, dict) else 0
+    prompt_tokens = safe_int(usage.get("prompt_tokens", usage.get("input_tokens", 0))) if isinstance(usage, dict) else 0
+    completion_tokens = safe_int(usage.get("completion_tokens", usage.get("output_tokens", 0))) if isinstance(usage, dict) else 0
+    total_tokens = safe_int(usage.get("total_tokens", prompt_tokens + completion_tokens)) if isinstance(usage, dict) else 0
     log = {
         "timestamp": now_utc().isoformat(),
         "request_id": request_id,

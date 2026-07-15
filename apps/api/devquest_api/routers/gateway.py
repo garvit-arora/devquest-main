@@ -13,9 +13,9 @@ from .. import state
 from ..deps import now_utc
 from ..key_store import save_api_key
 from ..models import ChatCompletionRequest, ChatMessage, ResponsesCreateRequest
-from ..providers import MODEL_REGISTRY, ProviderUnavailable, provider, public_models, request_credit_cost
+from ..providers import MODEL_REGISTRY, ProviderUnavailable, provider, public_models
 from ..services.entitlements import ensure_repository_access
-from ..services.gateway import authenticate_api_key, enforce_key_credit_limit, enforce_rate_limits, record_api_usage, validate_request_limits
+from ..services.gateway import authenticate_api_key, credits_for_response, enforce_key_credit_limit, enforce_rate_limits, estimated_request_credits, record_api_usage, validate_request_limits
 
 router = APIRouter(prefix="/v1", tags=["gateway"])
 
@@ -40,7 +40,7 @@ async def chat_completions(request: ChatCompletionRequest, authorization: str | 
         raise HTTPException(status_code=403, detail={"error": {"message": "Key is restricted from this model", "type": "permission_error"}})
 
     request_id = f"req_{uuid4().hex[:12]}"
-    estimated = request_credit_cost(model)
+    estimated = estimated_request_credits(request)
     enforce_key_credit_limit(key, estimated)
     try:
         reservation = state.ledger.reserve(user_id=key.user_id, amount=estimated, request_id=request_id, metadata={"model": request.model, "stream": request.stream, "key_prefix": key.prefix})
@@ -68,8 +68,9 @@ async def chat_completions(request: ChatCompletionRequest, authorization: str | 
             return StreamingResponse(stream(), media_type="text/event-stream")
 
         response = await provider.chat_completion(request)
-        state.ledger.settle(user_id=key.user_id, reserved=reservation, actual_amount=estimated, request_id=request_id)
-        record_api_usage(key, request, request_id, estimated, started, 200, response)
+        actual = credits_for_response(response, default=estimated)
+        state.ledger.settle(user_id=key.user_id, reserved=reservation, actual_amount=actual, request_id=request_id)
+        record_api_usage(key, request, request_id, actual, started, 200, response)
         return response
     except ProviderUnavailable as exc:
         state.ledger.release(user_id=key.user_id, reserved=reservation, request_id=request_id, reason=str(exc))
@@ -97,7 +98,7 @@ async def responses(request: ResponsesCreateRequest, authorization: str | None =
 
     request_id = f"req_{uuid4().hex[:12]}"
     response_id = f"resp_{uuid4().hex[:24]}"
-    estimated = request_credit_cost(model)
+    estimated = estimated_request_credits(chat_request)
     enforce_key_credit_limit(key, estimated)
     try:
         reservation = state.ledger.reserve(user_id=key.user_id, amount=estimated, request_id=request_id, metadata={"model": chat_request.model, "stream": request.stream, "key_prefix": key.prefix, "api": "responses"})
@@ -117,8 +118,9 @@ async def responses(request: ResponsesCreateRequest, authorization: str | None =
 
     try:
         provider_response = await provider.chat_completion(chat_request)
-        state.ledger.settle(user_id=key.user_id, reserved=reservation, actual_amount=estimated, request_id=request_id)
-        record_api_usage(key, chat_request, request_id, estimated, started, 200, provider_response, api_kind="responses")
+        actual = credits_for_response(provider_response, default=estimated)
+        state.ledger.settle(user_id=key.user_id, reserved=reservation, actual_amount=actual, request_id=request_id)
+        record_api_usage(key, chat_request, request_id, actual, started, 200, provider_response, api_kind="responses")
         text = chat_completion_text(provider_response)
         output = response_output_items(provider_response, text)
         return response_payload(response_id, request, text, provider_response.get("usage") if isinstance(provider_response, dict) else None, output=output)
@@ -221,8 +223,9 @@ async def stream_response_events(
                 content += delta
                 yield sse("response.output_text.delta", {"response_id": response_id, "item_id": item_id, "output_index": 0, "content_index": 0, "delta": delta})
         usage = estimated_usage(chat_request, content)
-        state.ledger.settle(user_id=key.user_id, reserved=reservation, actual_amount=estimated, request_id=request_id)
-        record_api_usage(key, chat_request, request_id, estimated, started, 200, {"usage": usage}, api_kind="responses")
+        actual = credits_for_response({"usage": usage}, default=estimated)
+        state.ledger.settle(user_id=key.user_id, reserved=reservation, actual_amount=actual, request_id=request_id)
+        record_api_usage(key, chat_request, request_id, actual, started, 200, {"usage": usage}, api_kind="responses")
         yield sse("response.output_text.done", {"response_id": response_id, "item_id": item_id, "output_index": 0, "content_index": 0, "text": content})
         yield sse("response.content_part.done", {"response_id": response_id, "item_id": item_id, "output_index": 0, "content_index": 0, "part": {"type": "output_text", "text": content, "annotations": []}})
         yield sse("response.output_item.done", {"response_id": response_id, "output_index": 0, "item": response_message_item(item_id, content)})

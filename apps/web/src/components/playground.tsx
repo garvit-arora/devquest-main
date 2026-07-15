@@ -166,7 +166,6 @@ export function Playground() {
           model,
           input: prompt,
           stream: false,
-          max_output_tokens: 800,
         }),
       });
 
@@ -314,8 +313,8 @@ export function Playground() {
               />
               <div className="mt-2 flex items-center justify-between text-xs text-white/64">
                 <div className="flex flex-wrap gap-4">
-                  <span>{tokenEstimate}/800 tokens to be sent</span>
-                  <span>{selected ? `${Math.min(2, Math.max(1, Math.ceil(selected.credit_multiplier)))} credits max` : "model unavailable"}</span>
+                  <span>{tokenEstimate} estimated input tokens</span>
+                  <span>{selected ? "2+ credits by usage" : "model unavailable"}</span>
                   <span>Status {runInfo.status}</span>
                 </div>
                 <button
@@ -366,7 +365,6 @@ function buildCodeSnippet(kind: "integration" | "cli", model: string, prompt: st
   const body = {
     model: model || "devquest-fast",
     input: prompt.trim() || "Write a short integration example for DevQuest AI.",
-    max_output_tokens: 800,
     stream: false,
   };
 

@@ -29,7 +29,6 @@ async function main() {
     body: JSON.stringify({
       model: "gpt-5.6-sol",
       input: "Say hello from DevQuest AI in one short sentence.",
-      max_output_tokens: 256,
     }),
   });
 
