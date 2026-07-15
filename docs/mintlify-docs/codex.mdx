@@ -3,9 +3,25 @@ title: Codex setup
 description: Use DevQuest AI with Codex CLI and the Codex IDE extension.
 ---
 
-## Configure Codex
+## 1. Open config.toml
 
-Add this provider to `C:\Users\<USERNAME>\.codex\config.toml`.
+Open PowerShell and run:
+
+```powershell
+notepad "$env:USERPROFILE\.codex\config.toml"
+```
+
+If Notepad asks to create the file, choose **Yes**.
+
+The file location is:
+
+```text
+C:\Users\<USERNAME>\.codex\config.toml
+```
+
+## 2. Paste the DevQuest provider
+
+Paste this into `config.toml`, then save the file:
 
 ```toml
 model = "gpt-5.6-sol"
@@ -19,27 +35,31 @@ env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"
 ```
 
-In the IDE extension, you can also open the same file from Codex Settings.
+In the IDE extension, you can also open the same file from Gear icon, Codex Settings, Open config.toml.
 
-## Set your key
+## 3. Set your API key
 
-Windows PowerShell for the current terminal:
+In PowerShell, set your DevQuest API key for the current terminal:
 
 ```powershell
 $env:DEVQUEST_API_KEY = "dq_live_your_key"
 ```
 
-Windows PowerShell for future terminals:
+Then save it for future terminals:
 
 ```powershell
 setx DEVQUEST_API_KEY "dq_live_your_key"
 ```
 
-Restart VS Code, Cursor, Windsurf, or your VS Code fork afterward so the persistent variable is visible.
+Use the API key shown once in the DevQuest dashboard when you create a key.
 
-## Launch Codex
+## 4. Restart your editor
 
-After restarting, launch Codex from your IDE extension or run:
+Close and reopen VS Code, Cursor, Windsurf, or your VS Code fork. This reloads the `DEVQUEST_API_KEY` environment variable and the updated `config.toml`.
+
+## 5. Launch Codex
+
+After restarting, open the Codex extension or run:
 
 ```powershell
 codex

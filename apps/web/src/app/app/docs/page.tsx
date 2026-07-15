@@ -31,6 +31,8 @@ base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"`;
 
+const openCodexConfig = `notepad "$env:USERPROFILE\\.codex\\config.toml"`;
+
 const powerShellSetup = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
 setx DEVQUEST_API_KEY "dq_live_your_key"`;
 
@@ -83,10 +85,11 @@ export default function DocsReferencePage() {
             <h2 className="text-base font-semibold">Use DevQuest in Codex</h2>
           </div>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[#aaa]">
-            Add DevQuest to `C:\Users\&lt;USERNAME&gt;\.codex\config.toml`. In the Codex IDE extension, open it from Gear icon, Codex Settings, Open config.toml. Keep reasoning at medium.
+            Open `C:\Users\&lt;USERNAME&gt;\.codex\config.toml` with Notepad, paste the DevQuest provider, set your API key, restart VS Code or Cursor, then launch Codex. Keep reasoning at medium.
           </p>
 
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
+          <div className="mt-5 grid gap-4 xl:grid-cols-3">
+            <Snippet title="Open config.toml" value={openCodexConfig} copied={copied === "open-config"} onCopy={() => copy("open-config", openCodexConfig)} />
             <Snippet title="config.toml" value={codexConfig} copied={copied === "config"} onCopy={() => copy("config", codexConfig)} />
             <Snippet title="PowerShell key setup" value={powerShellSetup} copied={copied === "powershell"} onCopy={() => copy("powershell", powerShellSetup)} />
           </div>
@@ -94,7 +97,7 @@ export default function DocsReferencePage() {
           <div className="mt-4 grid gap-4 xl:grid-cols-2">
             <div className="rounded border border-[#333] bg-[#202020] p-4">
               <h3 className="text-sm font-semibold">Restart editor</h3>
-              <p className="mt-2 text-sm leading-6 text-[#aaa]">After `setx`, restart VS Code, Cursor, Windsurf, or your VS Code fork so the new environment key is visible.</p>
+              <p className="mt-2 text-sm leading-6 text-[#aaa]">After `setx`, fully close and reopen VS Code, Cursor, Windsurf, or your VS Code fork so the key and config are reloaded.</p>
             </div>
             <Snippet title="Launch Codex" value={launchCodex} copied={copied === "launch"} onCopy={() => copy("launch", launchCodex)} />
           </div>
