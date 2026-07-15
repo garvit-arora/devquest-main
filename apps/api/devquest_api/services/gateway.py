@@ -15,7 +15,6 @@ from .audit import record_platform_log
 from .achievements import award_api_usage_achievements
 
 BASE_API_REQUEST_CREDITS = 2
-TOKEN_CREDIT_STEP = 5000
 
 RANK_RATE_LIMITS = [
     (12000, 30, 5000),
@@ -118,15 +117,11 @@ def validate_request_limits(request: ChatCompletionRequest) -> None:
 
 
 def credits_for_token_usage(total_tokens: int | None) -> int:
-    if not total_tokens or total_tokens < TOKEN_CREDIT_STEP:
-        return BASE_API_REQUEST_CREDITS
-    return BASE_API_REQUEST_CREDITS + max(0, total_tokens // TOKEN_CREDIT_STEP)
+    return BASE_API_REQUEST_CREDITS
 
 
 def estimated_request_credits(request: ChatCompletionRequest) -> int:
-    input_tokens = max(1, sum(len(message.content) for message in request.messages) // 4)
-    requested_tokens = input_tokens + max(0, request.max_tokens or 0)
-    return credits_for_token_usage(requested_tokens)
+    return BASE_API_REQUEST_CREDITS
 
 
 def response_total_tokens(response: dict[str, object] | None) -> int:
@@ -139,8 +134,7 @@ def response_total_tokens(response: dict[str, object] | None) -> int:
 
 
 def credits_for_response(response: dict[str, object] | None, *, default: int) -> int:
-    total_tokens = response_total_tokens(response)
-    return credits_for_token_usage(total_tokens) if total_tokens else default
+    return min(BASE_API_REQUEST_CREDITS, default) if default else BASE_API_REQUEST_CREDITS
 
 
 def safe_int(value: object) -> int:

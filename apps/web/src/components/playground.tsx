@@ -314,7 +314,7 @@ export function Playground() {
               <div className="mt-2 flex items-center justify-between text-xs text-white/64">
                 <div className="flex flex-wrap gap-4">
                   <span>{tokenEstimate} estimated input tokens</span>
-                  <span>{selected ? "2+ credits by usage" : "model unavailable"}</span>
+                  <span>{selected ? "2 credits max" : "model unavailable"}</span>
                   <span>Status {runInfo.status}</span>
                 </div>
                 <button

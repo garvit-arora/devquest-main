@@ -26,4 +26,4 @@ curl https://devquest.garvitarora.xyz/v1/models
 
 ## Billing
 
-Model requests reserve 2 credits first, then settle based on actual total tokens after the response is returned. Larger generations cost more credits automatically.
+Every successful model request costs 2 credits maximum. Failed provider requests release the reserved credits.

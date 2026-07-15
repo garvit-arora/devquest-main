@@ -59,7 +59,7 @@ def load_settings() -> Settings:
         max_requests_per_minute=int(os.getenv("DEVQUEST_MAX_REQUESTS_PER_MINUTE", "5")),
         max_requests_per_day=int(os.getenv("DEVQUEST_MAX_REQUESTS_PER_DAY", "100")),
         max_concurrent_requests=int(os.getenv("DEVQUEST_MAX_CONCURRENT_REQUESTS", "1")),
-        max_input_chars=int(os.getenv("DEVQUEST_MAX_INPUT_CHARS", "24000")),
+        max_input_chars=int(os.getenv("DEVQUEST_MAX_INPUT_CHARS", "200000")),
         max_models_per_key=int(os.getenv("DEVQUEST_MAX_MODELS_PER_KEY", "1")),
         max_credits_per_request=int(os.getenv("DEVQUEST_MAX_CREDITS_PER_REQUEST", "2")),
         referral_reward_credits=int(os.getenv("DEVQUEST_REFERRAL_REWARD_CREDITS", "100")),

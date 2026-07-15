@@ -12,8 +12,11 @@ This guide deploys DevQuest AI as a split production system:
 Recommended production domains:
 
 - App: `https://devquest.garvitarora.xyz`
-- API: `https://api.devquest.garvitarora.xyz`
-- Gateway: `https://api.devquest.garvitarora.xyz/v1`
+- Public API route: `https://devquest.garvitarora.xyz`
+- Gateway: `https://devquest.garvitarora.xyz/v1`
+- Backend origin: your Azure App Service URL, used behind the public route.
+
+Do not point Codex or users at `https://api.devquest.garvitarora.xyz/v1` until that subdomain has a valid certificate and binding.
 
 ## 1. Commit The Project
 
@@ -66,8 +69,9 @@ Core production values:
 
 ```env
 NEXT_PUBLIC_APP_URL=https://devquest.garvitarora.xyz
-NEXT_PUBLIC_API_URL=https://api.devquest.garvitarora.xyz
-NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://api.devquest.garvitarora.xyz/v1
+NEXT_PUBLIC_API_URL=https://devquest.garvitarora.xyz
+NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://devquest.garvitarora.xyz/v1
+DEVQUEST_BACKEND_ORIGIN=https://your-azure-backend.azurewebsites.net
 
 SESSION_SECRET=generate-a-long-random-secret
 DEVQUEST_API_KEY_PEPPER=generate-a-long-random-pepper
@@ -161,8 +165,9 @@ Set Vercel environment variables:
 
 ```env
 NEXT_PUBLIC_APP_URL=https://devquest.garvitarora.xyz
-NEXT_PUBLIC_API_URL=https://api.devquest.garvitarora.xyz
-NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://api.devquest.garvitarora.xyz/v1
+NEXT_PUBLIC_API_URL=https://devquest.garvitarora.xyz
+NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://devquest.garvitarora.xyz/v1
+DEVQUEST_BACKEND_ORIGIN=https://your-azure-backend.azurewebsites.net
 ```
 
 Add the custom domain in Vercel:
@@ -546,8 +551,9 @@ After DNS is live, update:
 
 ```env
 NEXT_PUBLIC_APP_URL=https://devquest.garvitarora.xyz
-NEXT_PUBLIC_API_URL=https://api.devquest.garvitarora.xyz
-NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://api.devquest.garvitarora.xyz/v1
+NEXT_PUBLIC_API_URL=https://devquest.garvitarora.xyz
+NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://devquest.garvitarora.xyz/v1
+DEVQUEST_BACKEND_ORIGIN=https://your-azure-backend.azurewebsites.net
 ```
 
 ## 12. Final Production Smoke Tests
@@ -567,7 +573,7 @@ https://devquest.garvitarora.xyz/signin
 Check gateway route:
 
 ```powershell
-curl https://api.devquest.garvitarora.xyz/v1/models
+curl https://devquest.garvitarora.xyz/v1/models
 ```
 
 Check Vercel frontend can reach backend:
@@ -612,7 +618,9 @@ The only rule is to keep env URLs consistent:
 
 ```env
 NEXT_PUBLIC_APP_URL=https://devquest.garvitarora.xyz
-NEXT_PUBLIC_API_URL=https://api.devquest.garvitarora.xyz
+NEXT_PUBLIC_API_URL=https://devquest.garvitarora.xyz
+NEXT_PUBLIC_DEVQUEST_GATEWAY_URL=https://devquest.garvitarora.xyz/v1
+DEVQUEST_BACKEND_ORIGIN=https://your-azure-backend.azurewebsites.net
 ```
 
 That gives DevQuest a clean production shape:

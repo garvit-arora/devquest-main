@@ -10,7 +10,7 @@ https://api.devquest.garvitarora.xyz   Backend API and /v1 gateway
 This is cleaner than putting everything on one hostname because Codex should point directly at the API base URL:
 
 ```toml
-base_url = "https://api.devquest.garvitarora.xyz/v1"
+base_url = "https://devquest.garvitarora.xyz/v1"
 ```
 
 You can still deploy both containers on one Azure VM at first. Split into separate VMs later when traffic grows.
@@ -240,7 +240,7 @@ model_reasoning_effort = "medium"
 
 [model_providers.devquest]
 name = "DevQuest"
-base_url = "https://api.devquest.garvitarora.xyz/v1"
+base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"
 ```

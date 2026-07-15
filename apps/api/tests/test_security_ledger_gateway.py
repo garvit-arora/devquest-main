@@ -102,11 +102,11 @@ def test_credit_settlement_records_token_overage():
     assert ledger.records[-1].metadata["source"] == "token_overage"
 
 
-def test_token_credit_tiers_have_no_fixed_two_credit_cap():
+def test_token_credit_cost_is_capped_at_two_credits():
     assert credits_for_token_usage(4999) == 2
-    assert credits_for_token_usage(5000) == 3
-    assert credits_for_token_usage(10000) == 4
-    assert credits_for_token_usage(15000) == 5
+    assert credits_for_token_usage(5000) == 2
+    assert credits_for_token_usage(10000) == 2
+    assert credits_for_token_usage(15000) == 2
 
 
 def test_duplicate_reward_prevention():
@@ -942,7 +942,7 @@ def test_ready_workflow_messages_cover_email_csv_and_repo_star(monkeypatch):
     assert main.ledger.balance(user.id) == 523
 
 
-def test_gateway_charges_dynamic_token_tier_credits(monkeypatch):
+def test_gateway_charges_max_two_credits_per_request(monkeypatch):
     client, user = authenticated_client()
     add_repo()
 
@@ -973,11 +973,10 @@ def test_gateway_charges_dynamic_token_tier_credits(monkeypatch):
     )
 
     assert response.status_code == 200
-    assert main.ledger.balance(user.id) == 494
-    assert main.api_request_logs[-1]["credits"] == 6
+    assert main.ledger.balance(user.id) == 498
+    assert main.api_request_logs[-1]["credits"] == 2
     overage_records = [record for record in main.ledger.records if record.metadata.get("source") == "token_overage"]
-    assert len(overage_records) == 1
-    assert overage_records[0].amount == -4
+    assert len(overage_records) == 0
     achievements = client.get("/api/achievements")
     assert achievements.status_code == 200
     assert any(item["id"] == "first_api_request" and item["unlocked"] and item["reward_credits"] == 0 for item in achievements.json()["data"])
