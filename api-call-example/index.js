@@ -28,8 +28,8 @@ async function main() {
     },
     body: JSON.stringify({
       model: "gpt-5.6-sol",
-      input: "Say hello from DevQuest AI in one short sentence.",
-      max_output_tokens: 512,
+      input: "Write a concise HTML CSS JS TODO app. Return visible code only.",
+      max_output_tokens: 2048,
     }),
   });
 
@@ -41,7 +41,8 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(JSON.stringify(data, null, 2));
+  const text = data?.output?.[0]?.content?.[0]?.text;
+  console.log(text || JSON.stringify(data, null, 2));
 }
 
 main().catch((error) => {
