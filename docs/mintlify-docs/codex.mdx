@@ -50,15 +50,15 @@ codex
 DevQuest routes model inference through:
 
 ```text
-Codex client -> DevQuest API -> Azure deployment
+Codex client -> DevQuest API -> model provider
 ```
 
 Local code edits, terminal commands, file inspection, diffs, and approval prompts still happen on the user's computer.
 
-The gateway implements `POST /v1/responses` for Codex-compatible clients, including text responses, SSE text streaming, non-streaming function-call output items, function-call output ingestion, usage reporting, credit checks, and repository-star enforcement. Streaming tool-call deltas should be treated as experimental until validated with the exact Codex client version you deploy against. Use medium reasoning for the DevQuest Codex provider.
+The gateway implements `POST /v1/responses` for Codex-compatible clients, including text responses, SSE text streaming, non-streaming function-call output items, function-call output ingestion, usage reporting, credit checks, and repository-star enforcement. Streaming tool-call deltas should be treated as experimental until validated with your exact Codex client version. Use medium reasoning for the DevQuest Codex provider.
 
-Use a model enabled on the user's API key. The dashboard currently offers `DeepSeek-V4-Pro`, `gpt-5.5`, `gpt-5.6-luna`, and `gpt-5.6-sol`, so this guide uses `gpt-5.6-sol`.
+Use the model enabled on your API key. The dashboard currently offers `DeepSeek-V4-Pro`, `gpt-5.5`, `gpt-5.6-luna`, and `gpt-5.6-sol`, so this guide uses `gpt-5.6-sol`.
 
 ## Not included
 
-DevQuest API keys do not include ChatGPT-plan usage, Codex Cloud tasks, OpenAI-hosted remote agents, cloud delegation, or proprietary features outside your configured Azure deployments.
+DevQuest API keys do not include ChatGPT-plan usage, Codex Cloud tasks, OpenAI-hosted remote agents, cloud delegation, or proprietary features outside DevQuest-supported models.

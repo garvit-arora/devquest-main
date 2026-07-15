@@ -1,33 +1,29 @@
 ---
 title: Models
-description: Azure deployment names available through the DevQuest gateway.
+description: Models available through the DevQuest API gateway.
 ---
 
-DevQuest exposes your approved Azure deployment names through the restricted gateway.
+DevQuest lets each API key use one selected model. Choose the model when creating the key in the dashboard.
 
-## Public models
+## Available models
 
-Only the models listed in `DEVQUEST_PUBLIC_MODELS` are shown to users and allowed on API keys.
+The current dashboard model options are:
 
-```env
-DEVQUEST_PUBLIC_MODELS=DeepSeek-V4-Pro,gpt-5.5,gpt-5.6-luna,gpt-5.6-sol
-```
+- `DeepSeek-V4-Pro`
+- `gpt-5.5`
+- `gpt-5.6-luna`
+- `gpt-5.6-sol`
 
-Users can attach one model to each key.
+Your API key can only call the model selected for that key.
 
-## Backend catalog
+## List models
 
-The backend maps these public model IDs to Azure deployment names:
-
-| Public model | Env variable | Azure deployment |
-| --- | --- | --- |
-| `DeepSeek-V4-Pro` | `DEVQUEST_DEEPSEEK_V4_PRO_MODEL` | `DeepSeek-V4-Pro` |
-| `gpt-5.5` | `DEVQUEST_AZURE_GPT_55_MODEL` | `gpt-5.5` |
-| `gpt-5.6-luna` | `DEVQUEST_AZURE_GPT_56_LUNA_MODEL` | `gpt-5.6-luna` |
-| `gpt-5.6-sol` | `DEVQUEST_AZURE_GPT_56_SOL_MODEL` | `gpt-5.6-sol` |
-
-## List public models
+You can also fetch available models from the API:
 
 ```bash
-curl http://localhost:8000/v1/models
+curl https://devquest.garvitarora.xyz/v1/models
 ```
+
+## Billing
+
+Model requests reserve 2 credits first, then settle based on actual total tokens after the response is returned. Larger generations cost more credits automatically.

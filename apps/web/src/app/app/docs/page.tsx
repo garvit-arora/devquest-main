@@ -52,7 +52,7 @@ export default function DocsReferencePage() {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#67e8bd]">Docs Reference</p>
           <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">DevQuest API setup</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[#aaa]">
-            Create a key, call the Responses endpoint, then optionally connect Codex CLI or the Codex IDE extension through the same provider config.
+            Earn credits, create a key, call the Responses endpoint, then optionally connect Codex CLI or the Codex IDE extension.
           </p>
         </section>
 
@@ -100,7 +100,7 @@ export default function DocsReferencePage() {
           </div>
 
           <p className="mt-4 text-xs leading-5 text-[#8f8f8f]">
-            DevQuest keys route model inference through your Azure-backed gateway. They do not unlock Codex Cloud tasks, ChatGPT-plan usage, cloud delegation, or unsupported proprietary features.
+            DevQuest keys route model inference through the DevQuest gateway. They do not unlock Codex Cloud tasks, ChatGPT-plan usage, cloud delegation, or unsupported proprietary features.
           </p>
         </section>
 
