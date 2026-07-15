@@ -14,7 +14,7 @@ const API_KEY = normalizeApiKey(process.argv[2] || process.env.DEVQUEST_API_KEY 
 const BASE_URL = (process.env.DEVQUEST_BASE_URL || "https://devquest.garvitarora.xyz/v1").replace(/\/$/, "");
 
 async function main() {
-  if (!API_KEY || API_KEY === "paste_your_api_key_here") {
+  if (!API_KEY) {
     throw new Error('Set your key first: $env:DEVQUEST_API_KEY="dq_live_..."');
   }
 
@@ -29,19 +29,25 @@ async function main() {
     body: JSON.stringify({
       model: "gpt-5.6-sol",
       input: "Say hello from DevQuest AI in one short sentence.",
-      max_output_tokens: 512,
+      max_output_tokens: 256,
     }),
   });
 
-  const data = await response.json().catch(() => null);
+  const text = await response.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = text;
+  }
 
   if (!response.ok) {
     console.error("Request failed:", response.status, response.statusText);
-    console.error(JSON.stringify(data, null, 2));
+    console.error(typeof data === "string" ? data : JSON.stringify(data, null, 2));
     process.exit(1);
   }
 
-  console.log(JSON.stringify(data, null, 2));
+  console.log(typeof data === "string" ? data : JSON.stringify(data, null, 2));
 }
 
 main().catch((error) => {
