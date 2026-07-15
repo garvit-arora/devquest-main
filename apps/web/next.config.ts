@@ -2,7 +2,11 @@ import type { NextConfig } from "next";
 import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 
 function nextConfig(phase: string): NextConfig {
-  const backendOrigin = (process.env.DEVQUEST_BACKEND_ORIGIN || "http://localhost:8000").replace(/\/$/, "");
+  const fallbackBackendOrigin =
+    phase === PHASE_DEVELOPMENT_SERVER
+      ? "http://localhost:8000"
+      : "https://devquest-bdayfba2arh9h6ch.canadacentral-01.azurewebsites.net";
+  const backendOrigin = (process.env.DEVQUEST_BACKEND_ORIGIN || fallbackBackendOrigin).replace(/\/$/, "");
 
   return {
     distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
