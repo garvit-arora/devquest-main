@@ -16,7 +16,7 @@ Supported trigger starters include:
 - Scheduled run
 - Manual run
 
-The visible workflow canvas does not ask users to do GitHub star work. Repository access is enforced by the backend before sensitive actions run.
+The visible workflow canvas focuses on app triggers, AI steps, and actions. Repository access is enforced before sensitive actions run.
 
 ## AI tasks
 
@@ -28,10 +28,10 @@ Each run uses DevQuest credits and is limited by the user's active entitlement. 
 
 Database save nodes can store workflow output after an AI step or app action.
 
-When a database credential is added, DevQuest stores only a hashed credential record in MongoDB. Raw secrets are not returned to the dashboard.
+When a database credential is added, DevQuest stores only a protected credential record. Raw secrets are not returned to the dashboard.
 
 <Warning>
-  If a future workflow action needs to reuse a raw external database password, store it with Azure Key Vault or encrypted secret storage instead of a one-way hash.
+  Only add credentials that your workflow needs. Use encrypted secret storage for any reusable external password.
 </Warning>
 
 ## Referrals
@@ -42,19 +42,10 @@ Use referral links in this format:
 https://devquest.space/r/USER_REFERRAL_CODE
 ```
 
-When the link opens, DevQuest records the referral click in MongoDB, stores a secure HTTP-only cookie, and redirects the user to normal sign in without a visible referral query parameter.
+When the link opens, DevQuest records the referral click, stores a secure HTTP-only cookie, and redirects the user to normal sign in without a visible referral query parameter.
 
-Referral credits are awarded only after the referred user connects GitHub successfully.
+Referral credits are awarded only after the referred user completes account connection successfully.
 
 ## Notifications
 
-Dashboard notifications are stored in MongoDB and also dispatched through Azure services when configured:
-
-- Azure Service Bus for notification queueing
-- Azure Communication Email for email delivery
-
-Configure the queue name with:
-
-```text
-AZURE_SERVICE_BUS_NOTIFICATION_QUEUE=devquest-user-notifications
-```
+Dashboard notifications are stored for the user and can also be delivered by email when notification delivery is configured.

@@ -2,7 +2,7 @@
 
 ## Project
 
-DevQuest AI is a GitHub-star-gated AI API platform. Users sign in with GitHub, star approved repositories, earn credits, create API keys, and call Azure-backed model deployments through the DevQuest gateway.
+DevQuest AI is a repository-quest-gated AI API platform. Users sign in, complete approved repository quests, earn credits, create API keys, and call model deployments through the DevQuest gateway.
 
 ## Writing style
 
@@ -10,7 +10,7 @@ DevQuest AI is a GitHub-star-gated AI API platform. Users sign in with GitHub, s
 - Keep headings short and sentence case.
 - Prefer copy-pasteable snippets for setup, API calls, and configuration.
 - Use `DevQuest AI`, `DevQuest gateway`, `API key`, `credits`, and `approved repositories` consistently.
-- Never include real API keys, GitHub secrets, Azure keys, database URLs, or customer data.
+- Never include real API keys, provider secrets, database URLs, or customer data.
 
 ## Content boundaries
 
