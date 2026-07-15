@@ -392,7 +392,7 @@ export function ApiKeyManager() {
           onClose={() => setCreateOpen(false)}
           onNameChange={setName}
           onLimitChange={setLimit}
-          onModelToggle={(model) => {
+          onModelChange={(model) => {
             setSelectedModels([model]);
           }}
           onCreate={createKey}
@@ -430,7 +430,7 @@ function CreateKeyModal({
   onClose,
   onNameChange,
   onLimitChange,
-  onModelToggle,
+  onModelChange,
   onCreate,
 }: {
   name: string;
@@ -442,20 +442,22 @@ function CreateKeyModal({
   onClose: () => void;
   onNameChange: (value: string) => void;
   onLimitChange: (value: number) => void;
-  onModelToggle: (value: string) => void;
+  onModelChange: (value: string) => void;
   onCreate: () => void;
 }) {
+  const selectedModel = selectedModels[0] ?? models[0] ?? "";
+
   return (
-    <div className="fixed inset-0 z-[90] grid place-items-center bg-black/72 p-4">
-      <section className="w-full max-w-[440px] rounded-md border border-[#333] bg-[#202020] text-[#eeeeee] shadow-2xl">
-        <div className="flex h-12 items-center justify-between border-b border-[#303030] px-5">
+    <div className="fixed inset-0 z-[90] grid min-h-0 place-items-center bg-black/72 p-3 sm:p-4">
+      <section className="flex max-h-[min(92vh,720px)] w-full max-w-[440px] flex-col overflow-hidden rounded-md border border-[#333] bg-[#202020] text-[#eeeeee] shadow-2xl">
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-[#303030] px-5">
           <h2 className="text-base font-semibold">Create new secret key</h2>
           <button onClick={onClose} className="grid size-8 place-items-center rounded text-[#c9c9c9] hover:bg-[#2c2c2c]" aria-label="Close create key modal">
             <X className="size-4" />
           </button>
         </div>
 
-        <div className="p-5">
+        <div className="min-h-0 overflow-y-auto p-5">
           <p className="text-xs leading-5 text-[#a9a9a9]">This key is tied to your DevQuest account and can call your default model aliases while repository access is active.</p>
 
           <div className="mt-5 grid gap-4">
@@ -475,23 +477,20 @@ function CreateKeyModal({
             <div className="rounded border border-[#333] bg-[#181818] p-3">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8f8f8f]">Models</p>
               <p className="mt-2 text-xs leading-5 text-[#8f8f8f]">Choose one model alias this key can call.</p>
-              <div className="mt-3 grid gap-2">
-                {models.map((model) => {
-                  const active = selectedModels.includes(model);
-                  return (
-                    <button
-                      key={model}
-                      type="button"
-                      onClick={() => onModelToggle(model)}
-                      className={`flex h-9 items-center justify-between rounded border px-3 text-left text-sm font-semibold transition ${active ? "border-[#dfdcff] bg-[#dfdcff] text-[#111]" : "border-[#3d3d3d] bg-[#202020] text-[#d8d8d8] hover:border-[#777]"}`}
-                    >
-                      <span>{modelLabel(model)}</span>
-                      {active ? <Check className="size-4" /> : null}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="mt-3 text-xs text-[#8f8f8f]">{selectedModels.length}/1 selected</p>
+              <select
+                value={selectedModel}
+                onChange={(event) => onModelChange(event.target.value)}
+                disabled={models.length === 0}
+                className="mt-3 h-10 w-full rounded border border-[#3d3d3d] bg-[#202020] px-3 text-sm font-semibold text-[#d8d8d8] outline-none transition focus:border-[#dfdcff] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {models.length === 0 ? <option value="">No models available</option> : null}
+                {models.map((model) => (
+                  <option key={model} value={model}>
+                    {modelLabel(model)}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-3 text-xs text-[#8f8f8f]">{selectedModel ? `${modelLabel(selectedModel)} selected` : "No model selected"}</p>
             </div>
           </div>
 
