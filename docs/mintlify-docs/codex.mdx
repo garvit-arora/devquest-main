@@ -39,16 +39,16 @@ In the IDE extension, you can also open the same file from Gear icon, Codex Sett
 
 ## 3. Set your API key
 
-In PowerShell, set your DevQuest API key for the current terminal:
-
-```powershell
-$env:DEVQUEST_API_KEY = "dq_live_your_key"
-```
-
-Then save it for future terminals:
+In PowerShell, save your DevQuest API key permanently for future terminals and editors:
 
 ```powershell
 setx DEVQUEST_API_KEY "dq_live_your_key"
+```
+
+For only the current PowerShell window, you can also set it temporarily:
+
+```powershell
+$env:DEVQUEST_API_KEY = "dq_live_your_key"
 ```
 
 Use the API key shown once in the DevQuest dashboard when you create a key.

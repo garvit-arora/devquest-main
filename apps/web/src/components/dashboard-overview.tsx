@@ -185,11 +185,12 @@ base_url = "https://devquest.garvitarora.xyz/v1"
 env_key = "DEVQUEST_API_KEY"
 wire_api = "responses"`;
 
-const codexPowerShell = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
-setx DEVQUEST_API_KEY "dq_live_your_key"
+const codexPowerShell = `setx DEVQUEST_API_KEY "dq_live_your_key"
+# Restart VS Code, Cursor, or this terminal after setx.
 codex`;
 
-const curlExample = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+const curlExample = `setx DEVQUEST_API_KEY "dq_live_your_key"
+# Restart your terminal after setx, then run:
 node index.js
 
 # Expected success:

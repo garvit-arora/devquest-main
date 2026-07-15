@@ -26,8 +26,12 @@ http://localhost:8000/v1
 ## Environment variable
 
 <CodeGroup>
-```powershell Windows PowerShell
-$env:DEVQUEST_API_KEY = "dq_live_your_key"
+```powershell Windows PowerShell permanent
+setx DEVQUEST_API_KEY "dq_live_your_key"
+```
+
+```powershell Windows PowerShell temporary
+$env:DEVQUEST_API_KEY="dq_live_your_key"
 ```
 
 ```bash macOS / Linux

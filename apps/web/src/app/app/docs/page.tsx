@@ -4,7 +4,8 @@ import { Check, Copy, ExternalLink, Terminal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const endpointSnippet = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
+const endpointSnippet = `setx DEVQUEST_API_KEY "dq_live_your_key"
+# Restart your terminal after setx, then run your Node.js script.
 
 const response = await fetch("https://devquest.garvitarora.xyz/v1/responses", {
   method: "POST",
@@ -33,8 +34,10 @@ wire_api = "responses"`;
 
 const openCodexConfig = `notepad "$env:USERPROFILE\\.codex\\config.toml"`;
 
-const powerShellSetup = `$env:DEVQUEST_API_KEY = "dq_live_your_key"
-setx DEVQUEST_API_KEY "dq_live_your_key"`;
+const powerShellSetup = `setx DEVQUEST_API_KEY "dq_live_your_key"
+
+# Optional temporary key for this PowerShell window only:
+$env:DEVQUEST_API_KEY = "dq_live_your_key"`;
 
 const launchCodex = `codex`;
 

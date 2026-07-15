@@ -32,8 +32,12 @@ Raw keys are shown once. Store the key securely before closing the dialog.
 Use an environment variable so your key does not end up in source code.
 
 <CodeGroup>
-```powershell Windows PowerShell
-$env:DEVQUEST_API_KEY = "dq_live_your_key"
+```powershell Windows PowerShell permanent
+setx DEVQUEST_API_KEY "dq_live_your_key"
+```
+
+```powershell Windows PowerShell temporary
+$env:DEVQUEST_API_KEY="dq_live_your_key"
 ```
 
 ```bash macOS / Linux
@@ -70,4 +74,4 @@ Requests reserve 2 credits first, then settle from actual token usage:
 
 ## 7. Use Codex
 
-Use the `Codex setup` guide to open `C:\Users\<USERNAME>\.codex\config.toml` with Notepad, paste the DevQuest provider, set `DEVQUEST_API_KEY`, restart VS Code or Cursor, and launch Codex.
+Use the `Codex setup` guide to open `C:\Users\<USERNAME>\.codex\config.toml` with Notepad, paste the DevQuest provider, save `DEVQUEST_API_KEY` permanently with `setx`, restart VS Code or Cursor, and launch Codex.
