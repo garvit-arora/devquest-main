@@ -34,6 +34,10 @@ def log_oauth_failure(stage: str, detail: str) -> None:
     record_platform_log("error", "github_oauth_failure", message, {"stage": stage})
 
 
+def github_callback_url() -> str:
+    return f"{settings.app_url}/api/auth/github/callback"
+
+
 @router.get("/github/login")
 async def github_login(ref: str | None = None) -> RedirectResponse:
     if not settings.github_client_id:
@@ -42,7 +46,7 @@ async def github_login(ref: str | None = None) -> RedirectResponse:
     query = urlencode(
         {
             "client_id": settings.github_client_id,
-            "redirect_uri": f"{settings.api_url}/api/auth/github/callback",
+            "redirect_uri": github_callback_url(),
             "scope": "read:user user:email public_repo",
             "state": state_value,
             "allow_signup": "true",
@@ -76,7 +80,7 @@ async def github_callback(
                     "client_id": settings.github_client_id,
                     "client_secret": settings.github_client_secret,
                     "code": code,
-                    "redirect_uri": f"{settings.api_url}/api/auth/github/callback",
+                    "redirect_uri": github_callback_url(),
                 },
             )
             if token_response.status_code >= 400:
